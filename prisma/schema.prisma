@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider = "mysql"
+  url = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model Book {
+  id         Int    @id @default(autoincrement())
+  title      String
+  image      String
+  url        String      
+  bookshelfs BookshelfBook[]
+}
+
+model Bookshelf {
+  id         Int    @id @default(autoincrement())
+  title      String
+  user_name  String
+  hash       String
+  twitter_id String
+  books      BookshelfBook[]
+}
+
+model BookshelfBook {
+  id           Int    @id @default(autoincrement())
+  book_id      Int
+  book         Book @relation(fields: [book_id], references: [id])
+  bookshelf_id Int
+  bookshelf    Bookshelf @relation(fields: [bookshelf_id], references: [id])
+}
