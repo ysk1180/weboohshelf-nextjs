@@ -1,5 +1,6 @@
+import html2canvas from 'html2canvas'
 import type { NextPage } from 'next'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Book } from './api/fetch_amazon_books'
 
 const Home: NextPage = () => {
@@ -7,6 +8,8 @@ const Home: NextPage = () => {
   const [candidateBooks, setCandidateBooks] = useState<Book[]>([])
   const [selectedBooks, setSelectedBooks] = useState<Book[]>([])
   const [title, setTitle] = useState("わたしの本棚")
+
+  const bookshelfImage = useRef<HTMLDivElement>(null)
 
   const onSubmit = async() => {
     if(!keyword) setCandidateBooks([])
@@ -16,20 +19,42 @@ const Home: NextPage = () => {
     setCandidateBooks(data)
   }
 
+  const onCreateImage = async () => {
+    const bookshelfDom = bookshelfImage.current
+    if (!bookshelfDom) return
+
+    const canvas = await html2canvas(bookshelfDom, {useCORS: true})
+    const imageData = canvas.toDataURL()
+
+    const response = await fetch("/api/upload_image", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({imageData, selectedBooks, title})
+    })
+    console.log(response)
+  }
+
   return (
     <div className="m-2">
-      <div className="relative">
-        <div>
-          <img src="/bookshelf.png" />
+      <div className="flex">
+        <div ref={bookshelfImage} className="relative mx-auto w-[320px]">
+          <div>
+            <img src="/bookshelf.png" />
+          </div>
+          <div className="absolute top-4 mx-4 text-2xl font-bold">{title}</div>
+          <div className="absolute bottom-5 flex justify-between mx-2" >
+            {selectedBooks.map(book => (
+              <div className="w-1/5 mx-1">
+                <img src={book.image} />
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="absolute top-4 mx-4 text-2xl font-bold">{title}</div>
-        <div className="absolute bottom-5 flex justify-between mx-2" >
-          {selectedBooks.map(book => (
-            <div className="w-1/5 mx-1">
-              <img src={book.image} />
-            </div>
-          ))}
-        </div>
+      </div>
+      <div className="my-4">
+        <button onClick={onCreateImage}>画像作成</button>
       </div>
       <div className="flex my-4">
         <div className="">
