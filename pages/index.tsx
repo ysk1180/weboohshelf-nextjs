@@ -1,15 +1,31 @@
 import html2canvas from 'html2canvas'
 import type { NextPage } from 'next'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Book } from './api/fetch_amazon_books'
+import Modal from 'react-modal'
+import { useRouter } from 'next/router'
 
 const Home: NextPage = () => {
   const [keyword, setKeyword] = useState("")
   const [candidateBooks, setCandidateBooks] = useState<Book[]>([])
   const [selectedBooks, setSelectedBooks] = useState<Book[]>([])
   const [title, setTitle] = useState("わたしの本棚")
+  const [modalHash, setModalHash] = useState<string>("")
 
   const bookshelfImage = useRef<HTMLDivElement>(null)
+
+  const router = useRouter()
+
+  useEffect(() => {
+    (async() => {
+      const { h } = router.query
+      if (!h) return
+
+      const res = await fetch(`/api/fetch_bookshelf?hash=${h}`)
+      const data = await res.json()
+      console.log(data)
+    })()
+  }, [router.query])
 
   const onSubmit = async() => {
     if(!keyword) setCandidateBooks([])
@@ -33,8 +49,22 @@ const Home: NextPage = () => {
       },
       body: JSON.stringify({imageData, selectedBooks, title})
     })
-    console.log(response)
+    const data = await response.json()
+    const hash = data.hash as string
+
+    setModalHash(hash)
   }
+
+  const customStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+    },
+  };
 
   return (
     <div className="m-2">
@@ -93,8 +123,27 @@ const Home: NextPage = () => {
           <input value={title} onChange={e => setTitle(e.target.value)} />
         </div>
       </div>
+      <Modal
+        isOpen={!!modalHash}
+        onRequestClose={() => setModalHash("")}
+        style={customStyles}
+      >
+        <div className="text-red-500">
+          Hey
+        </div>
+        <img src={`https://webookshelf-${process.env.NODE_ENV}.s3-ap-northeast-1.amazonaws.com/images/${modalHash}.png`} />
+        <a
+          className="text-blue-500"
+          href={`https://twitter.com/share?text=%23Web本棚&url=https://webookshelf.herokuapp.com?h=${modalHash}`}
+          target="_blank"
+        >
+            Twitterシェア
+        </a>
+      </Modal>
     </div>
   )
 }
+
+Modal.setAppElement('body');
 
 export default Home
