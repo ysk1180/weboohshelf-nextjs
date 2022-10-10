@@ -48,9 +48,10 @@ const uploadImage = async (
       twitter_id: ""
     }
   })
-  selectedBooks.forEach(async({title, url, image}) => {
+  selectedBooks.forEach(async({asin, title, url, image}) => {
     const book = await prisma.book.create({
       data: {
+        asin,
         title,
         url,
         image,

@@ -1,12 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import amazonPaapi from 'amazon-paapi'
-
-export type Book = {
-  asin: string
-  url: string
-  title: string
-  image: string
-}
+import { Book } from '@prisma/client';
 
 const fetchAmazonBooks = async (
   req: NextApiRequest,
