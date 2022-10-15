@@ -1,7 +1,9 @@
 const Footer = ():JSX.Element => {
   return (
-    <div className="py-20">
-      フッター
+    <div className="py-5">
+      <div>利用規約</div>
+      <div>プライバシーポリシー</div>
+      <a href="" target="_blank">開発者Twitterアカウント</a>
     </div>
   )
 };

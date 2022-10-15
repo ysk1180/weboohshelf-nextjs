@@ -23,16 +23,19 @@ const fetchAmazonBooks = async (
     Resources  : [
       'ItemInfo.Title',
       'Images.Primary.Large',
+      'ItemInfo.ContentInfo',
     ]
   })
 
   const returnData: Book[] = []
   data.SearchResult.Items.forEach(item => {
     returnData.push({
-      asin  : item.ASIN,
-      url   : item.DetailPageURL,
-      title : item.ItemInfo.Title.DisplayValue,
-      image : item.Images.Primary.Large.URL,
+      asin: item.ASIN,
+      url: item.DetailPageURL,
+      title: item.ItemInfo.Title.DisplayValue,
+      image: item.Images.Primary.Large.URL,
+      page: item.ItemInfo.ContentInfo.PagesCount.DisplayValue,
+      releasedAt: item.ItemInfo.ContentInfo.PublicationDate.DisplayValue,
     });
   });
 
