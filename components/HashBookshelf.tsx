@@ -19,11 +19,13 @@ const HashBookshelf = (): JSX.Element => {
   }, [router.query])
 
   return (
-    <div>
+    <>
       {bookshelf && (
-        <PastBookshelf bookshelf={bookshelf} />
+        <div className="mb-7">
+          <PastBookshelf bookshelf={bookshelf} />
+        </div>
       )}
-    </div>
+    </>
   )
 }
 

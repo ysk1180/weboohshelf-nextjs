@@ -10,7 +10,7 @@ const uploadImage = async (
   req: NextApiRequest,
   res: NextApiResponse<returnData>
 ) => {
-  const { imageData, selectedBooks, title } = req.body
+  const { imageData, selectedBooks, title, user_name, twitter_id } = req.body
 
   const fileData = imageData.replace(/^data:\w+\/\w+;base64,/, '')
   const decodedFile = new Buffer(fileData, 'base64')
@@ -44,13 +44,21 @@ const uploadImage = async (
     data: {
       title,
       hash,
-      user_name: "",
-      twitter_id: ""
+      user_name,
+      twitter_id,
     }
   })
   selectedBooks.forEach(async({asin, title, url, image}) => {
-    const book = await prisma.book.create({
-      data: {
+    const book = await prisma.book.upsert({
+      where: {
+        asin
+      },
+      update: {
+        title,
+        url,
+        image,
+      },
+      create: {
         asin,
         title,
         url,

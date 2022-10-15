@@ -10,13 +10,23 @@ import HashBookshelf from '../components/HashBookshelf'
 const Home: NextPage = () => {
   const [selectedBooks, setSelectedBooks] = useState<Book[]>([])
   const [title, setTitle] = useState("わたしの本棚")
+  const [userName, setUserName] = useState("")
+  const [twitterId, setTwitterId] = useState("")
   const [modalHash, setModalHash] = useState<string>("")
+  const [deleteButtonPresent, setDeleteButtonPresent] = useState(true)
 
   const bookshelfImage = useRef<HTMLDivElement>(null)
 
   const onCreateImage = async () => {
+    // TODO: ローディングアニメーション
+    setDeleteButtonPresent(false)
+    await new Promise(resolve => setTimeout(resolve, 1000)) // sleepさせないと×ボタンが画像に入ってしまう
+
     const bookshelfDom = bookshelfImage.current
-    if (!bookshelfDom) return
+    if (!bookshelfDom) {
+      setDeleteButtonPresent(true)
+      return
+    }
 
     const canvas = await html2canvas(bookshelfDom, {useCORS: true})
     const imageData = canvas.toDataURL()
@@ -26,46 +36,100 @@ const Home: NextPage = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({imageData, selectedBooks, title})
+      body: JSON.stringify({imageData, selectedBooks, title, user_name: userName, twitter_id: twitterId})
     })
     const data = await response.json()
     const hash = data.hash as string
 
-    // TODO: （あとで対応）モーダルに画像を表示するのが早すぎるのか、画像が表示されないことがある
+    setDeleteButtonPresent(true)
+    await new Promise(resolve => setTimeout(resolve, 500)) // sleepさせないとモーダルに画像が表示されない
+
     setModalHash(hash)
   }
 
   return (
     <div className="m-2">
       <HashBookshelf />
+      <h2 className="text-center mb-1.5">
+        あなたの本棚を作る
+      </h2>
+      <div className="text-center text-xs mb-2.5">
+        あなただけの本棚をシェアしましょう！
+      </div>
       <div className="flex">
         <div ref={bookshelfImage} className="relative mx-auto w-[320px]">
           <div>
             <img src="/bookshelf.png" />
           </div>
-          <div className="absolute top-4 mx-4 text-2xl font-bold">{title}</div>
-          <div className="absolute bottom-5 flex justify-between mx-2" >
-            {selectedBooks.map(book => (
-              <div className="w-1/5 mx-1" key={book.asin}>
-                <img src={book.image} />
+          <h2 className="absolute top-4 text-xl text-gray-900 font-bold w-full text-center">
+            {title}
+          </h2>
+          <div className="absolute bottom-5 flex justify-center mx-1" >
+            {selectedBooks.map((book, i) => (
+              <div className="w-1/5 mx-1 flex relative" key={i}>
+                <div className="mt-auto" key={book.asin}>
+                  <img src={book.image} />
+                </div>
+                <span
+                  onClick={() => setSelectedBooks(prev => {
+                    const arr = [...prev]
+                    arr.splice(i, 1)
+                    return arr
+                  })}
+                  className={`absolute -top-2.5 -right-2 text-gray-800 ${deleteButtonPresent ? "" : "hidden"}`}
+                >
+                  {/* TODO: svg周りでコンソールにワーニングが出ているので対応する */}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-7 text-gray-700">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                  </svg>
+                </span>
               </div>
             ))}
           </div>
         </div>
       </div>
-      <div className="my-4">
-        <button onClick={onCreateImage}>画像作成</button>
+      <div className="my-4 flex">
+        <button
+          onClick={onCreateImage}
+          className="mx-auto border py-2 px-3 rounded hover:opacity-80"
+        >
+          本棚の画像作成
+        </button>
       </div>
       {selectedBooks.length < 5 && (
         <SelectBook setSelectedBooks={setSelectedBooks} />
       )}
-      <div className="flex my-3">
-        <div className="">
+      <div className="flex my-4">
+        <div className="my-auto mr-1 w-1/4 text-sm md:text-base">
           本棚のタイトル
         </div>
-        <div className="ml-2">
-          <input value={title} onChange={e => setTitle(e.target.value)} />
+        <input
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          className="p-2 w-3/4 rounded"
+        />
+      </div>
+      <div className="flex my-4">
+        <div className="my-auto mr-1 w-1/4 text-sm md:text-base">
+          お名前
         </div>
+        <input
+          value={userName}
+          onChange={e => setUserName(e.target.value)}
+          className="p-2 w-3/4 rounded"
+          placeholder='任意'
+        />
+      </div>
+      <div className="flex my-4">
+        <div className="my-auto mr-1 w-1/4 text-sm md:text-base">
+          Twitter ID
+        </div>
+        <input
+          value={twitterId}
+          onChange={e => setTwitterId(e.target.value)}
+          className="p-2 w-3/4 rounded"
+          placeholder='任意 / @は不要です'
+        />
       </div>
       <PastBookshelves />
       <RecommendShareModal
