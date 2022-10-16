@@ -88,14 +88,16 @@ const Home: NextPage = () => {
           </div>
         </div>
       </div>
-      <div className="my-4 flex">
-        <button
-          onClick={onCreateImage}
-          className="mx-auto border py-2 px-3 rounded hover:opacity-80"
-        >
-          本棚の画像作成
-        </button>
-      </div>
+      {selectedBooks.length > 0 && (
+        <div className="my-4 flex">
+          <button
+            onClick={onCreateImage}
+            className="mx-auto border py-2 px-3 rounded hover:opacity-80"
+          >
+            本棚の画像作成
+          </button>
+        </div>
+      )}
       {selectedBooks.length < 5 && (
         <SelectBook setSelectedBooks={setSelectedBooks} />
       )}

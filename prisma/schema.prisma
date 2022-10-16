@@ -16,7 +16,7 @@ model Book {
   image      String
   url        String      
   page       Int
-  releasedAt DateTime
+  releasedAt String
   bookshelfs BookshelfBook[]
 }
 
