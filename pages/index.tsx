@@ -13,18 +13,18 @@ const Home: NextPage = () => {
   const [userName, setUserName] = useState("")
   const [twitterId, setTwitterId] = useState("")
   const [modalHash, setModalHash] = useState<string>("")
-  const [deleteButtonPresent, setDeleteButtonPresent] = useState(true)
+  const [screenShotMode, setScreenShotMode] = useState(false)
 
   const bookshelfImage = useRef<HTMLDivElement>(null)
 
   const onCreateImage = async () => {
     // TODO: ローディングアニメーション
-    setDeleteButtonPresent(false)
+    setScreenShotMode(true)
     await new Promise(resolve => setTimeout(resolve, 1000)) // sleepさせないと×ボタンが画像に入ってしまう
 
     const bookshelfDom = bookshelfImage.current
     if (!bookshelfDom) {
-      setDeleteButtonPresent(true)
+      setScreenShotMode(false)
       return
     }
 
@@ -41,32 +41,32 @@ const Home: NextPage = () => {
     const data = await response.json()
     const hash = data.hash as string
 
-    setDeleteButtonPresent(true)
+    setScreenShotMode(false)
     await new Promise(resolve => setTimeout(resolve, 500)) // sleepさせないとモーダルに画像が表示されない
 
     setModalHash(hash)
   }
 
   return (
-    <div className="m-2">
+    <div className="my-2 mx-3">
       <HashBookshelf />
-      <h2 className="text-center mb-1.5">
+      <h2 className="text-center mb-2">
         あなたの本棚を作る
       </h2>
-      <div className="text-center text-xs mb-2.5">
-        あなただけの本棚をシェアしましょう！
+      <div className="text-center text-xs mb-3">
+        自分だけの本棚を作って簡単にシェアできます！
       </div>
       <div className="flex">
         <div ref={bookshelfImage} className="relative mx-auto w-[320px]">
           <div>
             <img src="/bookshelf.png" />
           </div>
-          <h2 className="absolute top-4 text-xl text-gray-900 font-bold w-full text-center">
+          <h2 className={`absolute text-xl text-gray-900 font-bold w-full text-center ${screenShotMode ? "top-2" : "top-4"}`}>
             {title}
           </h2>
           <div className="absolute bottom-5 flex justify-center mx-1" >
             {selectedBooks.map((book, i) => (
-              <div className="w-1/5 mx-1 flex relative" key={i}>
+              <div className={`w-1/5 flex relative ${selectedBooks.length < 4 ? 'mx-2' : 'mx-1'}`} key={i}>
                 <div className="mt-auto" key={book.asin}>
                   <img src={book.image} />
                 </div>
@@ -76,7 +76,7 @@ const Home: NextPage = () => {
                     arr.splice(i, 1)
                     return arr
                   })}
-                  className={`absolute -top-2.5 -right-2 text-gray-800 ${deleteButtonPresent ? "" : "hidden"}`}
+                  className={`absolute -top-2.5 -right-2 text-gray-800 ${screenShotMode ? "hidden" : ""}`}
                 >
                   {/* TODO: svg周りでコンソールにワーニングが出ているので対応する */}
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-7 text-gray-700">

@@ -48,7 +48,7 @@ const uploadImage = async (
       twitter_id,
     }
   })
-  selectedBooks.forEach(async({asin, title, url, image, page, releasedAt}) => {
+  selectedBooks.forEach(async({asin, title, url, image, page, released_at}) => {
     const book = await prisma.book.upsert({
       where: {
         asin
@@ -58,7 +58,7 @@ const uploadImage = async (
         url,
         image,
         page,
-        releasedAt,
+        released_at,
       },
       create: {
         asin,
@@ -66,7 +66,7 @@ const uploadImage = async (
         url,
         image,
         page,
-        releasedAt,
+        released_at,
       }
     })
     await prisma.bookshelfBook.create({

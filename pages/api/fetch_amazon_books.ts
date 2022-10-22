@@ -37,7 +37,7 @@ const fetchAmazonBooks = async (
       title: item.ItemInfo.Title.DisplayValue,
       image: item.Images.Primary.Large.URL,
       page: item.ItemInfo.ContentInfo.PagesCount?.DisplayValue,
-      releasedAt: formattedD,
+      released_at: formattedD,
     });
   });
 

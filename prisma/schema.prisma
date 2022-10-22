@@ -10,13 +10,13 @@ datasource db {
 }
 
 model Book {
-  id         Int    @id @default(autoincrement())
-  asin       String @unique
-  title      String
-  image      String
-  url        String      
-  page       Int
-  releasedAt String
+  id          Int    @id @default(autoincrement())
+  asin        String @unique
+  title       String
+  image       String
+  url         String      
+  page        Int
+  released_at String
   bookshelfs BookshelfBook[]
 }
 

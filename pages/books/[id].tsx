@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { PrismaClient } from "@prisma/client";
+import SameBookBookshelves from "components/SameBookBookshelves";
 
 type Props = {
   book: any;
@@ -15,31 +16,43 @@ const FacilityDetail = ({ book }: Props): JSX.Element => {
         <title>{title}</title>
       </Head>
       <div>
+        {/* TODO: パンくずリスト */}
         <div className="flex mb-6">
           <div className="w-1/3 mr-2.5 mt-1.5">
             <img src={book.image} />
           </div>
           <div className="w-2/3">
-            <h1 className="">
+            <h1 className="mb-4">
               {book.title}
             </h1>
-            <div className="my-6">
+            {book.released_at && (
+              <div className="my-1 text-xs text-gray-200">
+                発売日：{book.released_at}
+              </div>
+            )}
+            {book.page && book.page !== 0 && (
+              <div className="my-1 text-xs text-gray-200">
+                {book.page}ページ
+              </div>
+            )}
+            <div className="mt-6">
               <a
                 href={book.url}
                 target="_blank"
-                className="border px-5 py-3 rounded"
+                className="flex bg-yellow-200 border border-yellow-800 text-black px-5 py-3 rounded w-fit"
               >
-                Amazonの詳細ページ
+                <span className="my-auto">
+                  Amazonの詳細ページ
+                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 ml-1 my-auto">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                </svg>
               </a>
             </div>
           </div>
         </div>
         <div>
-          載せたい情報：この本が入っている本棚と本棚の数、この本と一緒に本棚に入れられた本（一緒に入れられた数が多い順）
-          <h2>この本が入っている本棚</h2>
-        </div>
-        <div>
-          <h2>この本と一緒によく読まれている本</h2>
+          <SameBookBookshelves book={book} />
         </div>
       </div>
     </>
