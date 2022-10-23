@@ -21,7 +21,7 @@ const fetchRecentBookshelves = async (
     }
   })
 
-  const books = await prisma.$queryRaw(Prisma.sql`
+  const books: any = await prisma.$queryRaw(Prisma.sql`
     select b2.*, count from Book b2
     inner join (
       select b.id, count(*) as count from Book b
@@ -33,7 +33,7 @@ const fetchRecentBookshelves = async (
     ;`)
 
   // countがそのままだと「error - TypeError: Do not know how to serialize a BigInt」エラーが出てしまうので返還している
-  const convertedBooks = books.map((b: object) => ({...b, count: Number(b.count)}))
+  const convertedBooks = books.map((b: any) => ({...b, count: Number(b.count)}))
 
   res.status(200).json({bookshelves, books: convertedBooks})
 }

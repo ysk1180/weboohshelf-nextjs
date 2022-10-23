@@ -2,13 +2,13 @@ import html2canvas from 'html2canvas'
 import type { NextPage } from 'next'
 import { useRef, useState } from 'react'
 import RecommendShareModal from '../components/RecommendShareModal'
-import { Book } from '@prisma/client'
 import SelectBook from '../components/SelectBook'
 import PastBookshelves from '../components/PastBookshelves'
 import HashBookshelf from '../components/HashBookshelf'
+import { noIdBook } from 'types/expansion_book'
 
 const Home: NextPage = () => {
-  const [selectedBooks, setSelectedBooks] = useState<Book[]>([])
+  const [selectedBooks, setSelectedBooks] = useState<noIdBook[]>([])
   const [title, setTitle] = useState("わたしの本棚")
   const [userName, setUserName] = useState("")
   const [twitterId, setTwitterId] = useState("")

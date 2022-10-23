@@ -1,13 +1,13 @@
-import { Book } from "@prisma/client"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
+import { noIdBook } from "types/expansion_book"
 
 type Props = {
-  setSelectedBooks: Dispatch<SetStateAction<Book[]>>
+  setSelectedBooks: Dispatch<SetStateAction<noIdBook[]>>
 }
 
 const SelectBook = ({setSelectedBooks}: Props): JSX.Element => {
   const [keyword, setKeyword] = useState("")
-  const [candidateBooks, setCandidateBooks] = useState<Book[]>([])
+  const [candidateBooks, setCandidateBooks] = useState<noIdBook[]>([])
   const [openCandidates, setOpenCandidates] = useState(true)
 
   // ユーザーが入力後に少し待ってから検索を走らせる（入力途中のものでAmazonAPIにアクセスしてしまうのを防ぐため）

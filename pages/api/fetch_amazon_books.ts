@@ -1,10 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import amazonPaapi from 'amazon-paapi'
 import { Book } from '@prisma/client';
+import { noIdBook } from 'types/expansion_book';
 
 const fetchAmazonBooks = async (
   req: NextApiRequest,
-  res: NextApiResponse<Book[]>
+  res: NextApiResponse<noIdBook[]>
 ) => {
   const { keyword } = req.query
 
@@ -27,16 +28,16 @@ const fetchAmazonBooks = async (
     ]
   })
 
-  const returnData: Book[] = []
+  const returnData: noIdBook[] = []
   data.SearchResult.Items.forEach(item => {
     const d = new Date(item.ItemInfo.ContentInfo.PublicationDate.DisplayValue)
     const formattedD = `${d.getFullYear()}/${(d.getMonth()+1).toString().padStart(2, '0')}/${d.getDate().toString().padStart(2, '0')}`
     returnData.push({
-      asin: item.ASIN,
-      url: item.DetailPageURL,
-      title: item.ItemInfo.Title.DisplayValue,
-      image: item.Images.Primary.Large.URL,
-      page: item.ItemInfo.ContentInfo.PagesCount?.DisplayValue,
+      asin: item.ASIN as string,
+      url: item.DetailPageURL as string,
+      title: item.ItemInfo.Title.DisplayValue as string,
+      image: item.Images.Primary.Large.URL as string,
+      page: Number(item.ItemInfo.ContentInfo.PagesCount?.DisplayValue),
       released_at: formattedD,
     });
   });

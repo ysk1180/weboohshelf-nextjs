@@ -66,7 +66,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const id = Number(params.id)
+  const id = Number(params?.id)
 
   const prisma = new PrismaClient()
 
