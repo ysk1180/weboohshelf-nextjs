@@ -18,7 +18,7 @@ const PastBookshelf = ({bookshelf}: Props): JSX.Element => {
             {bookshelf.title}
           </h2>
           <div className="absolute bottom-5 flex justify-center mx-1" >
-            {bookshelf.books.map((b, i) => {
+            {bookshelf.books.map((b, i: number) => {
               const { id, image } = b.book
               return (
                 <div className={`w-1/5 flex relative ${bookshelf.books.length < 4 ? 'mx-2' : 'mx-1'}`} key={i}>

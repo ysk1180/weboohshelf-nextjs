@@ -24,7 +24,7 @@ model Bookshelf {
   id         Int    @id @default(autoincrement())
   title      String
   user_name  String
-  h       String
+  h          String
   twitter_id String
   books      BookshelfBook[]
 }
