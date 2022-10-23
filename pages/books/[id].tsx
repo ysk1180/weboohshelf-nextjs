@@ -40,6 +40,7 @@ const FacilityDetail = ({ book }: Props): JSX.Element => {
                 href={book.url}
                 target="_blank"
                 className="flex bg-yellow-200 border border-yellow-800 text-black px-5 py-3 rounded w-fit"
+                rel="noreferrer"
               >
                 <span className="my-auto">
                   Amazonの詳細ページ

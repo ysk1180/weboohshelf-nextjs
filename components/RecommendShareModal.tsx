@@ -39,6 +39,7 @@ const RecommendShareModal = ({isOpen, modalHash, setModalHash}: Props): JSX.Elem
               className="flex bg-sky-500 py-3 px-3 rounded hover:opacity-80 cursor-pointer"
               href={`https://twitter.com/share?text=%23Web本棚&url=https://webookshelf.herokuapp.com?h=${modalHash}`}
               target="_blank"
+              rel="noreferrer"
             >
               <span className="my-auto">
                 Twitterシェア

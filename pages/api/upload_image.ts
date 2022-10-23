@@ -43,7 +43,7 @@ const uploadImage = async (
   const bookshelf = await prisma.bookshelf.create({
     data: {
       title,
-      hash,
+      h: hash,
       user_name,
       twitter_id,
     }

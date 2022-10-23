@@ -12,7 +12,7 @@ const fetchBookshelf = async (
 
   const bookshelf = await prisma.bookshelf.findMany({
     where: {
-      hash: hash
+      h: hash
     },
     include: {
       books: {
