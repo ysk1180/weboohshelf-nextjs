@@ -13,7 +13,7 @@ const uploadImage = async (
   const { imageData, selectedBooks, title, user_name, twitter_id } = req.body
 
   const fileData = imageData.replace(/^data:\w+\/\w+;base64,/, '')
-  const decodedFile = new Buffer(fileData, 'base64')
+  const decodedFile = Buffer.from(fileData, 'base64')
 
   const l = 8;
   const c = "abcdefghijklmnopqrstuvwxyz0123456789";
