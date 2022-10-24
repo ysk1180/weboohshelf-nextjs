@@ -33,10 +33,10 @@ const fetchAmazonBooks = async (
     const d = new Date(item.ItemInfo.ContentInfo.PublicationDate.DisplayValue)
     const formattedD = `${d.getFullYear()}/${(d.getMonth()+1).toString().padStart(2, '0')}/${d.getDate().toString().padStart(2, '0')}`
     returnData.push({
-      asin: item.ASIN as string,
-      url: item.DetailPageURL as string,
-      title: item.ItemInfo.Title.DisplayValue as string,
-      image: item.Images.Primary.Large.URL as string,
+      asin: item.ASIN,
+      url: item.DetailPageURL,
+      title: item.ItemInfo.Title.DisplayValue,
+      image: item.Images.Primary.Large.URL,
       page: Number(item.ItemInfo.ContentInfo.PagesCount?.DisplayValue),
       released_at: formattedD,
     });
