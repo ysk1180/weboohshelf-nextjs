@@ -61,7 +61,7 @@ const uploadImage = async (
           title,
           url,
           image,
-          page,
+          page: page | 0,
           released_at,
         }
       })
