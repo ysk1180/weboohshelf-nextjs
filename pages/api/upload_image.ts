@@ -49,26 +49,23 @@ const uploadImage = async (
     }
   })
   selectedBooks.forEach(async({asin, title, url, image, page, released_at}) => {
-    const book = await prisma.book.upsert({
+    let book = await prisma.book.findUnique({
       where: {
         asin
       },
-      update: {
-        title,
-        url,
-        image,
-        page: page != null ? page : undefined, // https://www.prisma.io/docs/concepts/components/prisma-client/null-and-undefined
-        released_at: released_at != null ? released_at : undefined,
-      },
-      create: {
-        asin,
-        title,
-        url,
-        image,
-        page: page != null ? page : undefined,
-        released_at: released_at != null ? released_at : undefined,
-      }
     })
+    if (!book) {
+      book = await prisma.book.create({
+        data: {
+          asin,
+          title,
+          url,
+          image,
+          page,
+          released_at,
+        }
+      })
+    }
     await prisma.bookshelfBook.create({
       data: {
         book_id: book.id,
