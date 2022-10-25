@@ -13,19 +13,19 @@ model Book {
   id          Int    @id @default(autoincrement())
   asin        String @unique
   title       String
-  image       String
+  image       String?
   url         String      
-  page        Int
-  released_at String
+  page        Int?
+  released_at String?
   bookshelfs BookshelfBook[]
 }
 
 model Bookshelf {
   id         Int    @id @default(autoincrement())
-  title      String
-  user_name  String
+  title      String?
+  user_name  String?
   h          String
-  twitter_id String
+  twitter_id String?
   books      BookshelfBook[]
 }
 

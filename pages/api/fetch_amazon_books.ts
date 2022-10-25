@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import amazonPaapi from 'amazon-paapi'
-import { Book } from '@prisma/client';
 import { noIdBook } from 'types/expansion_book';
 
 const fetchAmazonBooks = async (
