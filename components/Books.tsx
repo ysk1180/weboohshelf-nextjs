@@ -14,7 +14,7 @@ const Books = ({books, isSameBookshelf = false}: Props): JSX.Element => {
           <Link href={`/books/${book.id}`}>
             <a className="flex">
               <div className="w-1/4 mr-2">
-                <img src={book.image} />
+                <img src={book.image || undefined} />
               </div>
               <div className="w-3/4">
                 <h3 className="text-sm mb-2">{book.title}</h3>
@@ -26,7 +26,7 @@ const Books = ({books, isSameBookshelf = false}: Props): JSX.Element => {
                     発売日：{book.released_at}
                   </div>
                 )}
-                {book.page && book.page !== 0 && (
+                {!!book.page && book.page !== 0 && (
                   <div className="my-1 text-xs text-gray-200">
                     {book.page}ページ
                   </div>

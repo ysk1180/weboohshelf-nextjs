@@ -30,7 +30,7 @@ const FacilityDetail = ({ book }: Props): JSX.Element => {
                 発売日：{book.released_at}
               </div>
             )}
-            {book.page && book.page !== 0 && (
+            {!!book.page && book.page !== 0 && (
               <div className="my-1 text-xs text-gray-200">
                 {book.page}ページ
               </div>
