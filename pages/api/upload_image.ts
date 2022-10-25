@@ -57,8 +57,6 @@ const uploadImage = async (
         title,
         url,
         image,
-        page: page != null ? page : undefined, // https://www.prisma.io/docs/concepts/components/prisma-client/null-and-undefined
-        released_at,
       },
       create: {
         asin,
