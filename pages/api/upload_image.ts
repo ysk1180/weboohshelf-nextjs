@@ -57,14 +57,16 @@ const uploadImage = async (
         title,
         url,
         image,
+        page: page != null ? page : undefined, // https://www.prisma.io/docs/concepts/components/prisma-client/null-and-undefined
+        released_at: released_at != null ? released_at : undefined,
       },
       create: {
         asin,
         title,
         url,
         image,
-        page,
-        released_at,
+        page: page != null ? page : undefined,
+        released_at: released_at != null ? released_at : undefined,
       }
     })
     await prisma.bookshelfBook.create({
