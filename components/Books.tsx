@@ -11,7 +11,7 @@ const Books = ({books, isSameBookshelf = false}: Props): JSX.Element => {
     <div className="space-y-4 mt-2">
       {books.map(book => (
         <div key={book.id}>
-          <Link href={`/books/${book.id}`}>
+          <Link href={`/books/${book.id}`} prefetch={false}>
             <a className="flex">
               <div className="w-1/4 mr-2">
                 <img src={book.image || undefined} />

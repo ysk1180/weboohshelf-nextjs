@@ -22,7 +22,7 @@ const PastBookshelf = ({bookshelf}: Props): JSX.Element => {
               const { id, image } = b.book
               return (
                 <div className={`w-1/5 flex relative ${bookshelf.books.length < 4 ? 'mx-2' : 'mx-1'}`} key={i}>
-                  <Link href={`/books/${id}`}>
+                  <Link href={`/books/${id}`} prefetch={false}>
                     <a className="mt-auto hover:opacity-80">
                       <img src={image} />
                     </a>
