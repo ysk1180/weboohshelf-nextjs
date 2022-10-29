@@ -18,11 +18,11 @@ const FacilityDetail = ({ book }: Props): JSX.Element => {
       <div>
         {/* TODO: パンくずリスト */}
         <div className="flex mb-6">
-          <div className="w-1/3 mr-2.5 mt-1.5">
+          <div className="w-1/3 md:w-1/4 mr-2.5 md:mr-4 mt-1.5">
             <img src={book.image} />
           </div>
-          <div className="w-2/3">
-            <h1 className="mb-4">
+          <div className="w-2/3 md:w-3/4">
+            <h1 className="mb-4 mt-1 text-base md:text-xl">
               {book.title}
             </h1>
             {book.released_at && (

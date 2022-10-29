@@ -9,7 +9,7 @@ const Header = ():JSX.Element => {
       <div className="flex items-center h-full max-w-3xl md:mx-auto">
         <Link href="/">
           <a className="px-4 py-2 text-xl">
-            Web本棚
+            <img src="/logo.png" />
           </a>
         </Link>
       </div>
