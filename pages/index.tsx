@@ -73,7 +73,7 @@ const Home: NextPage = () => {
             {selectedBooks.map((book, i) => (
               <div className={`w-1/5 flex relative ${selectedBooks.length < 4 ? 'mx-2' : 'mx-1'}`} key={i}>
                 <div className="mt-auto" key={book.asin}>
-                  <img src={book.image} />
+                  <img src={book.image || undefined} />
                 </div>
                 <span
                   onClick={() => setSelectedBooks(prev => {
