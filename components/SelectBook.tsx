@@ -34,8 +34,10 @@ const SelectBook = ({setSelectedBooks}: Props): JSX.Element => {
 
   return (
     <div className="my-5">
-      <div className="text-cneter text-xs text-gray-400 mb-2">
-        タイトルの一部を入力し、本棚に追加する本を選びましょう！
+      <div className="flex">
+        <div className="text-xs text-gray-400 mb-2 mx-auto">
+          タイトルの一部を入力し、本棚に追加する本を選びましょう！
+        </div>
       </div>
       <div className="flex mx-auto">
         <div className="my-auto mr-1 w-1/4 text-sm md:text-base">

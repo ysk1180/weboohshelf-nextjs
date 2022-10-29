@@ -26,12 +26,12 @@ const FacilityDetail = ({ book }: Props): JSX.Element => {
               {book.title}
             </h1>
             {book.released_at && (
-              <div className="my-1 text-xs text-gray-200">
+              <div className="my-1 text-xs md:text-sm text-gray-200">
                 発売日：{book.released_at}
               </div>
             )}
             {!!book.page && book.page !== 0 && (
-              <div className="my-1 text-xs text-gray-200">
+              <div className="my-1 text-xs md:text-sm text-gray-200">
                 {book.page}ページ
               </div>
             )}
@@ -39,10 +39,10 @@ const FacilityDetail = ({ book }: Props): JSX.Element => {
               <a
                 href={book.url}
                 target="_blank"
-                className="flex bg-yellow-200 border border-yellow-800 text-black px-5 py-3 rounded w-fit"
+                className="flex bg-yellow-200 border border-yellow-800 text-black px-5 py-3 rounded w-fit hover:opacity-80"
                 rel="noreferrer"
               >
-                <span className="my-auto">
+                <span className="my-auto md:text-lg">
                   Amazonの詳細ページ
                 </span>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 ml-1 my-auto">

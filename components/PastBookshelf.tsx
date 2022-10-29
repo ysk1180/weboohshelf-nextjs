@@ -8,7 +8,7 @@ const PastBookshelf = ({bookshelf}: Props): JSX.Element => {
 
   return (
     <div className="mt-3 mb-6">
-      <div className="text-center my-1.5 text-sm">{bookshelf.user_name || '名無し'}さんの本棚</div>
+      <div className="text-center my-1.5 text-sm text-gray-100">{bookshelf.user_name || '名無し'}さんの本棚</div>
       <div className="flex">
         <div className="relative mx-auto w-[320px]">
           <div>
