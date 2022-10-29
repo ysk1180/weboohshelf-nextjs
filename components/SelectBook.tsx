@@ -80,7 +80,7 @@ const SelectBook = ({setSelectedBooks}: Props): JSX.Element => {
           >
             <div className="flex">
               <div className="w-1/6 md:w-1/12">
-                <img src={book.image} />
+                <img src={book.image || undefined} />
               </div>
               <div className="w-5/6 md:w-11/12 ml-2 flex text-sm">
                 <div className="my-auto">
