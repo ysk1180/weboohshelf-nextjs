@@ -6,6 +6,7 @@ import SelectBook from '../components/SelectBook'
 import PastBookshelves from '../components/PastBookshelves'
 import HashBookshelf from '../components/HashBookshelf'
 import { noIdBook } from 'types/expansion_book'
+import Loading from 'components/Loading'
 
 const Home: NextPage = () => {
   const [selectedBooks, setSelectedBooks] = useState<noIdBook[]>([])
@@ -14,17 +15,19 @@ const Home: NextPage = () => {
   const [twitterId, setTwitterId] = useState("")
   const [modalHash, setModalHash] = useState<string>("")
   const [screenShotMode, setScreenShotMode] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const bookshelfImage = useRef<HTMLDivElement>(null)
 
   const onCreateImage = async () => {
-    // TODO: ローディングアニメーション
+    setLoading(true)
     setScreenShotMode(true)
     await new Promise(resolve => setTimeout(resolve, 1000)) // sleepさせないと×ボタンが画像に入ってしまう
 
     const bookshelfDom = bookshelfImage.current
     if (!bookshelfDom) {
       setScreenShotMode(false)
+      setLoading(false)
       return
     }
 
@@ -44,6 +47,7 @@ const Home: NextPage = () => {
     setScreenShotMode(false)
     await new Promise(resolve => setTimeout(resolve, 500)) // sleepさせないとモーダルに画像が表示されない
 
+    setLoading(false)
     setModalHash(hash)
   }
 
@@ -52,7 +56,7 @@ const Home: NextPage = () => {
       <HashBookshelf />
       <h2 className="text-center mb-3 flex">
         <div className="mx-auto flex">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 my-auto mr-1">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 my-auto mr-1 text-yellow-500">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
           </svg>
           あなたの本棚を作る
@@ -101,7 +105,7 @@ const Home: NextPage = () => {
             className="mx-auto border-2 py-2 px-3 rounded hover:opacity-80 flex"
           >
             本棚の画像作成
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 ml-1 my-auto">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 ml-1 my-auto text-yellow-500">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
             </svg>
           </button>
@@ -148,6 +152,7 @@ const Home: NextPage = () => {
         modalHash={modalHash}
         setModalHash={setModalHash}
       />
+      {loading && <Loading />}
     </div>
   )
 }
