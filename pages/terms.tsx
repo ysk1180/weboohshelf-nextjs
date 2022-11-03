@@ -6,7 +6,7 @@ import Head from 'next/head'
 const Terms: NextPage = () => {
   const title = '利用規約 - Web本棚'
   const description = `Web上で本棚を共有できるサービスです。ログイン不要で簡単に本棚が作成できてシェアできます。`
-  const url = `https://web-bookshelf.com/`
+  const url = `https://web-bookshelf.com/terms`
 
   const h2Css = "mb-3 mt-5 text-lg text-gray-100"
 
