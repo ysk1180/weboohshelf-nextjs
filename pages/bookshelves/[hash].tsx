@@ -25,6 +25,8 @@ const BookshelfDetail = ({ bookshelf }: Props): JSX.Element => {
         <meta property="og:description" content={description} />
         <meta property="og:url" content={url} />
         <meta property="og:image" content={`https://webookshelf-${process.env.NODE_ENV}.s3-ap-northeast-1.amazonaws.com/images/${bookshelf.h}.png`} />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <div className="my-2 mx-3">
         <Breadcrumbs list={[{display: `${bookshelf.user_name || '名無し'}さんの「${bookshelf.title}」`}]} />
