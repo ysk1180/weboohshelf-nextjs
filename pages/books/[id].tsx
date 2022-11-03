@@ -2,6 +2,7 @@ import Head from "next/head";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { PrismaClient } from "@prisma/client";
 import SameBookBookshelves from "components/SameBookBookshelves";
+import Breadcrumbs from "components/Breadcrumbs";
 
 type Props = {
   book: any;
@@ -9,15 +10,21 @@ type Props = {
 
 const FacilityDetail = ({ book }: Props): JSX.Element => {
   const title = `${book.title} - Web本棚`
+  const description = `Web上で簡単に本棚を共有できるサービスです。「${book.title}」と一緒に本棚に入れられた本屋、一緒によく読まれている本が見れます。`
+  const url = `https://web-bookshelf.com/books/${book.id}`
 
   return (
     <>
       <Head>
         <title>{title}</title>
+        <meta property="og:title" content={title} />
+        <meta name="description" content={description} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={url} />
       </Head>
       <div>
-        {/* TODO: パンくずリスト */}
-        <div className="flex mb-6">
+        <Breadcrumbs list={[{display: book.title}]} />
+        <div className="flex mb-6 mt-4">
           <div className="w-1/3 md:w-1/4 mr-2.5 md:mr-4 mt-1.5">
             <img src={book.image} />
           </div>

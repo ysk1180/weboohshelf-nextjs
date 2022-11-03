@@ -2,7 +2,7 @@ import { Book, Bookshelf } from "@prisma/client"
 import { useEffect, useState } from "react"
 import { expansionBook } from "types/expansion_book"
 import PastBookshelf from "./PastBookshelf"
-import SameBookshelfBooks from "./Books"
+import Books from "./Books"
 
 type Props = {
   book: Book
@@ -45,11 +45,11 @@ const SameBookBookshelves = ({book}: Props): JSX.Element => {
 
           この本と一緒によく読まれている本
         </div>
-        </h2>
+      </h2>
       <div className="text-xs mb-4 mt-3 text-gray-200 text-center">
         （「{book.title}」と同じ本棚に入っている本）
       </div>
-      <SameBookshelfBooks books={books} isSameBookshelf />
+      <Books books={books} displayCount='sameBookshelf' />
     </div>
   )
 }

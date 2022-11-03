@@ -22,26 +22,30 @@ const PastBookshelf = ({bookshelf}: Props): JSX.Element => {
       </div>
       <div className="flex">
         <div className="relative mx-auto w-[320px]">
-          <div>
-            <img src="/bookshelf.png" />
-          </div>
-          <h2 className="absolute top-4 text-xl text-gray-900 font-bold w-full text-center">
-            {bookshelf.title}
-          </h2>
-          <div className="absolute bottom-5 flex justify-center mx-1" >
-            {bookshelf.books.map((b, i: number) => {
-              const { id, image } = b.book
-              return (
-                <div className={`w-1/5 flex relative ${bookshelf.books.length < 4 ? 'mx-2' : 'mx-1'}`} key={i}>
-                  <Link href={`/books/${id}`} prefetch={false}>
-                    <a className="mt-auto hover:opacity-80">
-                      <img src={image} />
-                    </a>
-                  </Link>
-                </div>
-              )
-            })}
-          </div>
+          <Link href={`/bookshelves/${bookshelf.h}`}>
+            <a>
+              <div>
+                <img src="/bookshelf.png" />
+              </div>
+              <h2 className="absolute top-4 text-xl text-gray-900 font-bold w-full text-center">
+                {bookshelf.title}
+              </h2>
+              <div className="absolute bottom-5 flex justify-center mx-1" >
+                {bookshelf.books.map((b, i: number) => {
+                  const { id, image } = b.book
+                  return (
+                    <div className={`w-1/5 flex relative ${bookshelf.books.length < 4 ? 'mx-2' : 'mx-1'}`} key={i}>
+                      <Link href={`/books/${id}`} prefetch={false}>
+                        <a className="mt-auto hover:opacity-80">
+                          <img src={image} />
+                        </a>
+                      </Link>
+                    </div>
+                  )
+                })}
+              </div>
+            </a>
+          </Link>
         </div>
       </div>
     </div>

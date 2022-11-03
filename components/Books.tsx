@@ -4,9 +4,10 @@ import { expansionBook } from "types/expansion_book"
 type Props = {
   books: expansionBook[]
   isSameBookshelf?: boolean
+  displayCount?: 'none' | 'all' | 'sameBookshelf'
 }
 
-const Books = ({books, isSameBookshelf = false}: Props): JSX.Element => {
+const Books = ({books, displayCount = 'none'}: Props): JSX.Element => {
   return (
     <div className="space-y-5 mt-2">
       {books.map(book => (
@@ -18,9 +19,11 @@ const Books = ({books, isSameBookshelf = false}: Props): JSX.Element => {
               </div>
               <div className="w-3/4 md:w-5/6">
                 <h3 className="text-sm md:text-base mb-2">{book.title}</h3>
-                <div className="text-xs md:text-sm my-2 text-gray-300">
-                  {book.count}回{isSameBookshelf && '同じ'}本棚に入りました
-                </div>
+                {displayCount !== 'none' && (
+                  <div className="text-xs md:text-sm my-2 text-gray-300">
+                    {book.count}回{displayCount === 'sameBookshelf' && '同じ'}本棚に入りました
+                  </div>
+                )}
                 {book.released_at && (
                   <div className="my-1 text-xs md:text-sm text-gray-300">
                     発売日：{book.released_at}

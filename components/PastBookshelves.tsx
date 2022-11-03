@@ -41,7 +41,7 @@ const PastBookshelves = (): JSX.Element => {
           本棚に多く入れられた本
         </div>
         </h2>
-      <Books books={books} />
+      <Books books={books} displayCount='all' />
     </div>
   )
 }
