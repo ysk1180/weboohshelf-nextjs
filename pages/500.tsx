@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import Link from 'next/link';
 
 const Custom500 = (): JSX.Element => {
   const title = '予期せぬエラーが発生しました - Web本棚';
@@ -20,7 +21,11 @@ const Custom500 = (): JSX.Element => {
         </p>
         <div className="flex my-4">
           <button className="mx-auto border border-wheite rounded py-3 px-4 hover:opacity-80">
-            トップページに戻る
+            <Link href="/">
+              <a>
+                トップページに戻る
+              </a>
+            </Link>
           </button>
         </div>
       </div>
