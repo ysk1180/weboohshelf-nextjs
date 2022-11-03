@@ -19,13 +19,10 @@ const sitemap = (urls: string[]) => {
 const generateSitemap = async () => {
   const prisma = new PrismaClient()
 
-  const bookshelves = await prisma.bookshelf.findMany()
-  const bookshelfUrls = bookshelves.map(b => `/bookshelves/${b.h}`)
-
-  const books = await prisma.bookshelf.findMany()
+  const books = await prisma.book.findMany()
   const bookUrls = books.map(b => `/books/${b.id}`)
 
-  const urls = ['/', ...bookshelfUrls, ...bookUrls]
+  const urls = ['/', ...bookUrls]
 
   fs.writeFileSync('./public/sitemap.xml', sitemap(urls));
 };
