@@ -110,7 +110,7 @@ const Terms: NextPage = () => {
 export default Terms
 
 export const getStaticProps: GetStaticProps = async () => {
-  generateSitemap();
+  await generateSitemap();
 
   return {
     props: {},
