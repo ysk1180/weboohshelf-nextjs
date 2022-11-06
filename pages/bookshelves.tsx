@@ -6,16 +6,17 @@ import Books from "components/Books";
 import Paging from "components/Paging";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import PastBookshelf from "components/PastBookshelf";
 
 type Props = {
-  books: any[];
+  bookshelves: any[];
   page: number,
 };
 
-const BooksPage = ({ books, page }: Props): JSX.Element => {
-  const title = "本棚に入れられた本一覧 - Web本棚"
-  const description = `Web上で本棚を共有できるサービスです。ログイン不要で簡単に本棚が作成できてシェアできます。`
-  const url = "https://web-bookshelf.com/books"
+const BookshelvesPage = ({ bookshelves, page }: Props): JSX.Element => {
+  const title = "作成された本棚一覧 - Web本棚"
+  const description = "Web上で本棚を共有できるサービスです。ログイン不要で簡単に本棚が作成できてシェアできます。"
+  const url = "https://web-bookshelf.com/bookshelves"
 
   const [keyword, setKeyword] = useState('')
 
@@ -36,10 +37,10 @@ const BooksPage = ({ books, page }: Props): JSX.Element => {
         <meta property="og:url" content={url} />
       </Head>
       <div className="mx-3">
-        <Breadcrumbs list={[{display: '本一覧'}]} />
+        <Breadcrumbs list={[{display: '本棚一覧'}]} />
         <div className="my-2">
           <h1 className="text-lg mb-4">
-            本棚に入れられた本一覧
+            作成された本棚一覧
             <span className="text-sm ml-2">{page}ページ目</span>
           </h1>
           <div className="mb-5 flex gap-2">
@@ -48,6 +49,7 @@ const BooksPage = ({ books, page }: Props): JSX.Element => {
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
               className="p-2 rounded w-3/4"
+              placeholder="入っている本のタイトルで検索"
             />
             <button
               onClick={() => onSubmit()}
@@ -63,8 +65,12 @@ const BooksPage = ({ books, page }: Props): JSX.Element => {
               </div>
             </button>
           </div>
-          <Books books={books} displayCount='all' />
-          <Paging page={page} hasNextPage={books.length === 20} />
+          {bookshelves.map(bookshelf => (
+            <div key={bookshelf.id}>
+              <PastBookshelf bookshelf={bookshelf} />
+            </div>
+          ))}
+          <Paging page={page} hasNextPage={bookshelves.length === 20} />
         </div>
       </div>
     </>
@@ -77,30 +83,41 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 
   const prisma = new PrismaClient()
 
-  const books: any = await prisma.$queryRaw(Prisma.sql`
-    select b2.*, count from Book b2
-    inner join (
-      select b.id, count(*) as count from Book b
-      inner join BookshelfBook bsb on b.id = bsb.book_id
-      ${q ? Prisma.sql`where b.title like ${q}` : Prisma.empty}
-      group by b.id
-      order by count(*) desc
-      limit 20
-      offset ${20 * (page - 1)}
-    ) t on t.id = b2.id
-    ;`)
+  const bookshelves = await prisma.bookshelf.findMany({
+    take: 20,
+    skip: (page - 1) * 20,
+    where: {
+      books: {
+        some: {
+          book: {
+            title: {
+              contains: q
+            }
+          }
+        }
+      }
+    },
+    include: {
+      books: {
+        include: {
+          book: true
+        }
+      }
+    },
+    orderBy: {
+      id: 'desc'
+    }
+  })
 
-  if (books.length === 0) return { notFound: true };
+  if (bookshelves.length === 0) return { notFound: true };
 
-  // countがそのままだと「error - TypeError: Do not know how to serialize a BigInt」エラーが出てしまうので返還している
-  const convertedBooks = books.map((b: any) => ({...b, count: Number(b.count)}))
 
   return {
     props: {
-      books: convertedBooks,
+      bookshelves,
       page,
     },
   };
 };
 
-export default BooksPage;
+export default BookshelvesPage;

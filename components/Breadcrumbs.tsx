@@ -16,14 +16,12 @@ const Breadcrumbs = ({ list }: Props): JSX.Element => {
         );
       } else {
         return (
-          <>
-            <span key={e.display} className="text-sm text-gyra-300 cursor-pointer hover:opacity-80">
-              <Link href={e.href as string}>
-                <a>{e.display}</a>
-              </Link>
-            </span>
+          <span className="text-sm text-gyra-300 cursor-pointer hover:opacity-80">
+            <Link href={e.href as string}>
+              <a>{e.display}</a>
+            </Link>
             <span className="text-gray-400 mx-1">{'>'}</span>
-          </>
+          </span>
         );
       }
     });

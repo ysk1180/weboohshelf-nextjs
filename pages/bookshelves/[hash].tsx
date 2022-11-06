@@ -1,17 +1,22 @@
 import Head from "next/head";
 import { GetStaticPaths, GetStaticProps } from "next";
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import PastBookshelf from "components/PastBookshelf";
 import Home from "components/Home";
 import ShareLinks from "components/ShareLinks";
 import Books from "components/Books";
 import Breadcrumbs from "components/Breadcrumbs";
+import { expansionBook } from "types/expansion_book";
 
 type Props = {
   bookshelf: any;
+  bookshelves: any[]
+  books: expansionBook[]
+  bookshelfCount: number
+  bookCount: number
 };
 
-const BookshelfDetail = ({ bookshelf }: Props): JSX.Element => {
+const BookshelfDetail = ({ bookshelf, bookshelves, books, bookshelfCount, bookCount }: Props): JSX.Element => {
   const title = `${bookshelf.title} - Web本棚`
   const description = `Web上で本棚を共有できるサービスです。ログイン不要で簡単に本棚が作成できてシェアできます。`
   const url = `https://web-bookshelf.com/bookshelves/${bookshelf.h}`
@@ -29,15 +34,18 @@ const BookshelfDetail = ({ bookshelf }: Props): JSX.Element => {
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <div className="my-2 mx-3">
-        <Breadcrumbs list={[{display: `${bookshelf.user_name || '名無し'}さんの「${bookshelf.title}」`}]} />
+        <Breadcrumbs list={[
+          {href: '/bookshelves', display: '本棚一覧'},
+          {display: `${bookshelf.user_name || '名無し'}さんの「${bookshelf.title}」`}
+        ]} />
         <div className="mb-8">
           <PastBookshelf bookshelf={bookshelf} />
           <ShareLinks hash={bookshelf.h} />
           <div className="my-8 md:my-10">
             <h2 className="mb-1 flex">
               <div className="mx-auto flex">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 mr-1 my-auto text-yellow-500">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 mr-1 my-auto text-yellow-500">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
                 </svg>
                 本棚に入っている本
               </div>
@@ -45,7 +53,12 @@ const BookshelfDetail = ({ bookshelf }: Props): JSX.Element => {
             <Books books={bookshelf.books.map(b => b.book)} displayCount='none' />
           </div>
         </div>
-        <Home />
+        <Home
+          bookshelves={bookshelves}
+          books={books}
+          bookshelfCount={bookshelfCount}
+          bookCount={bookCount}
+        />
       </div>
     </>
   );
@@ -76,9 +89,44 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   if (!bookshelves[0]) return { notFound: true };
 
+  const recentBookshelves = await prisma.bookshelf.findMany({
+    take: 5,
+    include: {
+      books: {
+        include: {
+          book: true
+        }
+      }
+    },
+    orderBy: {
+      id: 'desc'
+    }
+  })
+
+  const books: any = await prisma.$queryRaw(Prisma.sql`
+    select b2.*, count from Book b2
+    inner join (
+      select b.id, count(*) as count from Book b
+      inner join BookshelfBook bsb on b.id = bsb.book_id
+      group by b.id
+      order by count(*) desc
+      limit 10
+    ) t on t.id = b2.id
+    ;`)
+
+  // countがそのままだと「error - TypeError: Do not know how to serialize a BigInt」エラーが出てしまうので返還している
+  const convertedBooks = books.map((b: any) => ({...b, count: Number(b.count)}))
+
+  const bookshelfCount = await prisma.bookshelf.count()
+  const bookCount = await prisma.book.count()
+
   return {
     props: {
       bookshelf: bookshelves[0],
+      bookshelves: recentBookshelves,
+      books: convertedBooks,
+      bookshelfCount,
+      bookCount,
     },
     revalidate: 3600,
   };
