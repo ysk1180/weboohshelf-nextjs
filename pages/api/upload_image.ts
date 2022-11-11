@@ -49,7 +49,8 @@ const uploadImage = async (
       twitter_id,
     }
   })
-  selectedBooks.forEach(async ({ asin, title, url, image, page, released_at }) => {
+  await new Promise(s => setTimeout(s, 100)) // 少しsleepさせてみる
+  await selectedBooks.forEach(async ({ asin, title, url, image, page, released_at }) => {
     let book = await prisma.book.findUnique({
       where: {
         asin
