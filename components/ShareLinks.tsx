@@ -23,7 +23,7 @@ const ShareLinks = ({hash}: Props): JSX.Element => {
         </a>
         <div className="bg-gray-500 rounded flex">
           <div className="my-auto p-2 hover:opacity-80 cursor-pointer">
-            <CopyToClipboard text={`https://web-bookshelf.com?/bookshelves/${hash}`} onCopy={() => alert("URLをコピーしました！")}>
+            <CopyToClipboard text={`https://web-bookshelf.com/bookshelves/${hash}`} onCopy={() => alert("URLをコピーしました！")}>
               <span className="text-sm md:text-base">
                 シェア用のURLをコピー
               </span>

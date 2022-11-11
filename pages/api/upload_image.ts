@@ -49,8 +49,7 @@ const uploadImage = async (
       twitter_id,
     }
   })
-  await new Promise(s => setTimeout(s, 100)) // 少しsleepさせてみる
-  await selectedBooks.forEach(async ({ asin, title, url, image, page, released_at }) => {
+  selectedBooks.forEach(async ({ asin, title, url, image, page, released_at }) => {
     let book = await prisma.book.findUnique({
       where: {
         asin
@@ -68,7 +67,6 @@ const uploadImage = async (
         }
       })
     }
-    await new Promise(s => setTimeout(s, 100)) // bookshelfBookのレコードが作られていないことがあるので少しsleepさせてみる
     await prisma.bookshelfBook.create({
       data: {
         book_id: book.id,
