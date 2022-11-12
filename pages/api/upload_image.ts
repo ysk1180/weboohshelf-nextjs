@@ -49,7 +49,7 @@ const uploadImage = async (
       twitter_id,
     }
   })
-  selectedBooks.forEach(async ({ asin, title, url, image, page, released_at }) => {
+  for (const { asin, title, url, image, page, released_at } of selectedBooks) {
     let book = await prisma.book.findUnique({
       where: {
         asin
@@ -73,7 +73,7 @@ const uploadImage = async (
         bookshelf_id: bookshelf.id,
       }
     })
-  })
+  }
 
   res.status(200).json({hash})
 }
