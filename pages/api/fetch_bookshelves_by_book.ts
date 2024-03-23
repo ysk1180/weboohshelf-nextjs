@@ -33,25 +33,26 @@ const fetchBookshelvesByBook = async (
   })
 
   const books: any = await prisma.$queryRaw(Prisma.sql`
-    select b2.*, t.count from Book b2
-      inner join (
-      select b.id, count(*) as count
-      from Book b
-      inner join BookshelfBook bsb2 on b.id = bsb2.book_id
-      where not b.id = ${bookId} and exists (
-        select 1
-        from Bookshelf bs
-        where bsb2.bookshelf_id = bs.id and exists
-          (select 1
-          from BookshelfBook bsb
-          where bsb.book_id = ${bookId}
-            and bsb.bookshelf_id = bs.id)
+    SELECT b2.*, t.count FROM "Book" AS b2
+    INNER JOIN (
+      SELECT b.id, COUNT(*) AS count
+      FROM "Book" AS b
+      INNER JOIN "BookshelfBook" AS bsb2 ON b.id = bsb2.book_id
+      WHERE NOT b.id = ${bookId} AND EXISTS (
+        SELECT 1
+        FROM "Bookshelf" AS bs
+        WHERE bsb2.bookshelf_id = bs.id AND EXISTS (
+          SELECT 1
+          FROM "BookshelfBook" AS bsb
+          WHERE bsb.book_id = ${bookId}
+          AND bsb.bookshelf_id = bs.id
+        )
       )
-      group by b.id
-      order by count(*) desc
-      limit 10
-      ) t on t.id = b2.id
-    ;`)
+      GROUP BY b.id
+      ORDER BY COUNT(*) DESC
+      LIMIT 10
+    ) AS t ON t.id = b2.id
+    ;`);
 
   // countがそのままだと「error - TypeError: Do not know how to serialize a BigInt」エラーが出てしまうので返還している
   const convertedBooks = books.map((b: any) => ({...b, count: Number(b.count)}))

@@ -78,17 +78,17 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const prisma = new PrismaClient()
 
   const books: any = await prisma.$queryRaw(Prisma.sql`
-    select b2.*, count from Book b2
-    inner join (
-      select b.id, count(*) as count from Book b
-      inner join BookshelfBook bsb on b.id = bsb.book_id
-      ${q ? Prisma.sql`where b.title like ${q}` : Prisma.empty}
-      group by b.id
-      order by count(*) desc
-      limit 20
-      offset ${20 * (page - 1)}
-    ) t on t.id = b2.id
-    ;`)
+    SELECT b2.*, t.count FROM "Book" AS b2
+    INNER JOIN (
+      SELECT b.id, COUNT(*) AS count FROM "Book" AS b
+      INNER JOIN "BookshelfBook" AS bsb ON b.id = bsb.book_id
+      ${q ? Prisma.sql`WHERE b.title LIKE ${q}` : Prisma.empty}
+      GROUP BY b.id
+      ORDER BY COUNT(*) DESC
+      LIMIT 20
+      OFFSET ${20 * (page - 1)}
+    ) AS t ON t.id = b2.id
+    ;`);
 
   if (books.length === 0) return { notFound: true };
 

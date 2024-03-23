@@ -104,15 +104,15 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   })
 
   const books: any = await prisma.$queryRaw(Prisma.sql`
-    select b2.*, count from Book b2
-    inner join (
-      select b.id, count(*) as count from Book b
-      inner join BookshelfBook bsb on b.id = bsb.book_id
-      group by b.id
-      order by count(*) desc
-      limit 10
-    ) t on t.id = b2.id
-    ;`)
+    SELECT b2.*, t.count FROM "Book" AS b2
+    INNER JOIN (
+      SELECT b.id, COUNT(*) AS count FROM "Book" AS b
+      INNER JOIN "BookshelfBook" AS bsb ON b.id = bsb.book_id
+      GROUP BY b.id
+      ORDER BY COUNT(*) DESC
+      LIMIT 10
+    ) AS t ON t.id = b2.id
+    ;`);
 
   // countがそのままだと「error - TypeError: Do not know how to serialize a BigInt」エラーが出てしまうので返還している
   const convertedBooks = books.map((b: any) => ({...b, count: Number(b.count)}))
