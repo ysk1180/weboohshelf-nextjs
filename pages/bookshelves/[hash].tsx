@@ -18,7 +18,9 @@ type Props = {
 
 const BookshelfDetail = ({ bookshelf, bookshelves, books, bookshelfCount, bookCount }: Props): JSX.Element => {
   const title = `${bookshelf.title} - Web本棚`
-  const description = `Web上で本棚を共有できるサービスです。ログイン不要で簡単に本棚が作成できてシェアできます。`
+  const authorName = bookshelf.user_name || '名無し'
+  const bookTitles = bookshelf.books.map((b: any) => b.book.title).join('、')
+  const description = `${authorName}さんの「${bookshelf.title}」。${bookTitles}など${bookshelf.books.length}冊の本が入った本棚です。`
   const url = `https://web-bookshelf.com/bookshelves/${bookshelf.h}`
 
   return (
@@ -32,6 +34,9 @@ const BookshelfDetail = ({ bookshelf, bookshelves, books, bookshelfCount, bookCo
         <meta property="og:image" content={`https://webookshelf-${process.env.NODE_ENV}.s3-ap-northeast-1.amazonaws.com/images/${bookshelf.h}.png`} />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={`https://webookshelf-${process.env.NODE_ENV}.s3-ap-northeast-1.amazonaws.com/images/${bookshelf.h}.png`} />
       </Head>
       <div className="my-2 mx-3">
         <Breadcrumbs list={[
@@ -39,26 +44,49 @@ const BookshelfDetail = ({ bookshelf, bookshelves, books, bookshelfCount, bookCo
           {display: `${bookshelf.user_name || '名無し'}さんの「${bookshelf.title}」`}
         ]} />
         <div className="mb-8">
+          <div className="mb-4">
+            <h1 className="text-center text-xl md:text-2xl font-bold mb-2">
+              {bookshelf.user_name || '名無し'}さんの「{bookshelf.title}」
+            </h1>
+            {bookshelf.twitter_id && (
+              <div className="text-center text-sm text-gray-400">
+                <a 
+                  href={`https://twitter.com/${bookshelf.twitter_id}`} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="hover:text-gray-200 transition inline-flex items-center gap-1"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                  </svg>
+                  @{bookshelf.twitter_id}
+                </a>
+              </div>
+            )}
+          </div>
           <PastBookshelf bookshelf={bookshelf} />
           <ShareLinks hash={bookshelf.h} />
           <div className="my-8 md:my-10">
-            <h2 className="mb-1 flex">
-              <div className="mx-auto flex">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 mr-1 my-auto text-yellow-500">
+            <h2 className="mb-4 flex">
+              <div className="mx-auto flex bg-gradient-to-r from-yellow-500/10 to-orange-500/10 px-4 py-2 rounded-lg border border-yellow-500/20">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 mr-2 my-auto text-yellow-500">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
                 </svg>
-                本棚に入っている本
+                <span className="font-medium">本棚に入っている本（{bookshelf.books.length}冊）</span>
               </div>
             </h2>
             <Books books={bookshelf.books.map(b => b.book)} displayCount='none' />
           </div>
         </div>
-        <Home
-          bookshelves={bookshelves}
-          books={books}
-          bookshelfCount={bookshelfCount}
-          bookCount={bookCount}
-        />
+        <div className="border-t border-gray-700 pt-8 mt-12">
+          <h2 className="text-center text-lg font-bold mb-6">あなたも本棚を作ってみませんか？</h2>
+          <Home
+            bookshelves={bookshelves}
+            books={books}
+            bookshelfCount={bookshelfCount}
+            bookCount={bookCount}
+          />
+        </div>
       </div>
     </>
   );
@@ -128,7 +156,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       bookshelfCount,
       bookCount,
     },
-    revalidate: 3600,
+    revalidate: 10,
   };
 };
 

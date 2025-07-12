@@ -1,35 +1,49 @@
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { useState } from 'react';
 
 type Props = {
   hash: string
 }
 
 const ShareLinks = ({hash}: Props): JSX.Element => {
+  const [copied, setCopied] = useState(false)
   return (
     <div className="flex">
-      <div className="mx-auto flex gap-3 md:gap-5">
+      <div className="mx-auto flex flex-col sm:flex-row gap-3 max-w-md w-full">
         <a
-          className="flex bg-sky-500 py-3 px-3 rounded hover:opacity-80 cursor-pointer"
+          className="flex justify-center items-center bg-black hover:bg-gray-900 py-3 px-4 rounded-lg cursor-pointer transition transform hover:scale-105 shadow-lg border border-gray-700"
           href={`https://twitter.com/share?text=%23Web本棚&url=https://web-bookshelf.com/bookshelves/${hash}`}
           target="_blank"
           rel="noreferrer"
         >
-          <span className="my-auto text-sm md:text-base">
-            Twitterシェア
-          </span>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 ml-1 my-auto">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+          <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
           </svg>
+          <span className="text-sm md:text-base font-medium">
+            Xでポスト
+          </span>
         </a>
-        <div className="bg-gray-500 rounded flex">
-          <div className="my-auto p-2 hover:opacity-80 cursor-pointer">
-            <CopyToClipboard text={`https://web-bookshelf.com/bookshelves/${hash}`} onCopy={() => alert("URLをコピーしました！")}>
-              <span className="text-sm md:text-base">
-                シェア用のURLをコピー
-              </span>
-            </CopyToClipboard>
-          </div>
-        </div>
+        <CopyToClipboard 
+          text={`https://web-bookshelf.com/bookshelves/${hash}`} 
+          onCopy={() => {
+            setCopied(true)
+            setTimeout(() => setCopied(false), 2000)
+          }}
+        >
+          <button className="flex justify-center items-center bg-gray-600 hover:bg-gray-700 py-3 px-4 rounded-lg cursor-pointer transition transform hover:scale-105 shadow-lg relative">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 mr-2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+            </svg>
+            <span className="text-sm md:text-base font-medium">
+              {copied ? 'コピーしました！' : 'URLをコピー'}
+            </span>
+            {copied && (
+              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-500 text-white text-xs px-2 py-1 rounded">
+                ✓ コピー完了
+              </div>
+            )}
+          </button>
+        </CopyToClipboard>
       </div>
     </div>
   )
