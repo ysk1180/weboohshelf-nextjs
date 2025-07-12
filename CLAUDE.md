@@ -2,6 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## 言語設定
+このプロジェクトでは、Claude Codeとのやりとりは全て日本語で行います。
+
 ## プロジェクト概要
 
 「Web本棚」は、選択した本で仮想的な本棚を作成し、画像として共有できるWebサービスです。Next.js 12.3.1で構築され、PostgreSQLデータベースとAWS S3を使用しています。
