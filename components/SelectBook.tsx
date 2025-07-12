@@ -132,7 +132,6 @@ const SelectBook = ({setSelectedBooks}: Props): JSX.Element => {
           )}
         </div>
       )}
-      </div>
     </div>
   )
 }
