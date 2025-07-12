@@ -4,7 +4,7 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import Breadcrumbs from "components/Breadcrumbs";
 import Books from "components/Books";
 import Paging from "components/Paging";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 
 type Props = {

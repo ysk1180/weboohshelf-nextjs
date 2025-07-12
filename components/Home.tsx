@@ -17,7 +17,7 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
   const [selectedBooks, setSelectedBooks] = useState<noIdBook[]>([])
   const [title, setTitle] = useState("わたしの本棚")
   const [userName, setUserName] = useState("")
-  const [twitterId, setTwitterId] = useState("")
+  const [xId, setXId] = useState("")
   const [modalHash, setModalHash] = useState<string>("")
   const [screenShotMode, setScreenShotMode] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -45,7 +45,7 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({imageData, selectedBooks, title, user_name: userName, twitter_id: twitterId})
+        body: JSON.stringify({imageData, selectedBooks, title, user_name: userName, twitter_id: xId})
       })
       
       if (!response.ok) {
@@ -157,12 +157,12 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Twitter ID（任意）</label>
+          <label className="block text-sm font-medium text-gray-300 mb-1">X ID（任意）</label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">@</span>
             <input
-              value={twitterId}
-              onChange={e => setTwitterId(e.target.value.replace('@', ''))}
+              value={xId}
+              onChange={e => setXId(e.target.value.replace('@', ''))}
               className="p-3 pl-8 w-full rounded-lg border border-gray-600 bg-gray-900/50 text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
               placeholder="username"
             />
