@@ -2,8 +2,8 @@ import Head from 'next/head';
 import Link from 'next/link';
 
 const Custom500 = (): JSX.Element => {
-  const title = '予期せぬエラーが発生しました - Web本棚';
-  const description = `Web上で本棚を共有できるサービスです。ログイン不要で簡単に本棚が作成できてシェアできます。`
+  const title = '500 サーバーエラー - Web本棚';
+  const description = `予期せぬエラーが発生しました。しばらく経ってから再度アクセスしてください。Web本棚でお気に入りの本をシェアしましょう。`
 
   return (
     <>

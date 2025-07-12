@@ -14,11 +14,16 @@ type Props = {
 };
 
 const BookshelvesPage = ({ bookshelves, page }: Props): JSX.Element => {
-  const title = "作成された本棚一覧 - Web本棚"
-  const description = "Web上で本棚を共有できるサービスです。ログイン不要で簡単に本棚が作成できてシェアできます。"
+  const router = useRouter()
+  const searchQuery = router.query.q as string
+  const title = searchQuery
+    ? `「${searchQuery}」を含む本棚一覧 - Web本棚`
+    : `みんなの本棚一覧${page > 1 ? ` (ページ${page})` : ''} - Web本棚`
+  const description = searchQuery
+    ? `「${searchQuery}」を含む本棚の一覧。Web本棚でみんなが作ったおすすめの本棚を探索して、読書の参考にしよう。`
+    : `Web本棚でみんなが作った本棚を探索。他の読書家がどんな本を組み合わせているかを参考に、新しい本との出会いを発見しよう。`
   const url = "https://web-bookshelf.com/bookshelves"
 
-  const router = useRouter()
   const [keyword, setKeyword] = useState(router.query.q as string || '')
 
   const onSubmit = (e?: React.FormEvent) => {

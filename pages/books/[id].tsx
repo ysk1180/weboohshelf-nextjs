@@ -20,8 +20,8 @@ type Props = {
 };
 
 const BookPage = ({ book }: Props): JSX.Element => {
-  const title = `${book.title} - Web本棚`
-  const description = `Web上で簡単に本棚を共有できるサービスです。「${book.title}」と一緒に本棚に入れられた本屋、一緒によく読まれている本が見れます。`
+  const title = `${book.title}${book.author ? ` - ${book.author}` : ''} | Web本棚`
+  const description = `「${book.title}」${book.author ? `（${book.author}）` : ''}を含むみんなの本棚を探索。この本と一緒によく読まれているおすすめの本も発見できます。Web本棚で新しい読書体験を。`
   const url = `https://web-bookshelf.com/books/${book.id}`
 
   return (

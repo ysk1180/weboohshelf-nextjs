@@ -34,6 +34,9 @@ const BookshelfDetail = ({ bookshelf, bookshelves, books, bookshelfCount, bookCo
         <meta property="og:image" content={`https://webookshelf-${process.env.NODE_ENV}.s3-ap-northeast-1.amazonaws.com/images/${bookshelf.h}.png`} />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={`https://webookshelf-${process.env.NODE_ENV}.s3-ap-northeast-1.amazonaws.com/images/${bookshelf.h}.png`} />
       </Head>
       <div className="my-2 mx-3">
         <Breadcrumbs list={[

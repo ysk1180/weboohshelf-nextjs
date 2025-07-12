@@ -12,8 +12,8 @@ type Props = {
 }
 
 const Index = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Element => {
-  const title = 'Web本棚'
-  const description = `Web上で本棚を共有できるサービスです。ログイン不要で簡単に本棚が作成できてシェアできます。`
+  const title = 'Web本棚 - 無料でお気に入りの本をシェアしよう'
+  const description = `Web本棚は、ログイン不要でお気に入りの本を選んでオリジナルの本棚を作成できる無料サービスです。最大5冊まで選んで、Twitterやブログで簡単にシェアできます。`
   const url = `https://web-bookshelf.com/`
 
   return (

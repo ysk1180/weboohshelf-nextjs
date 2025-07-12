@@ -2,8 +2,8 @@ import Head from 'next/head';
 import Link from 'next/link';
 
 const Custom404 = (): JSX.Element => {
-  const title = 'ページが見つかりませんでした - Web本棚';
-  const description = `Web上で本棚を共有できるサービスです。ログイン不要で簡単に本棚が作成できてシェアできます。`
+  const title = '404 ページが見つかりません - Web本棚';
+  const description = `お探しのページが見つかりませんでした。Web本棚のトップページから、お気に入りの本でオリジナルの本棚を作成してみませんか？`
 
   return (
     <>
