@@ -58,16 +58,21 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
 
   return (
     <>
-      <h2 className="text-center mb-3 flex">
-        <div className="mx-auto flex">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 my-auto mr-1 text-yellow-500">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
-          </svg>
-          あなたの本棚を作る
+      <div className="text-center mb-8">
+        <h1 className="text-2xl font-bold mb-2">Web本棚</h1>
+        <p className="text-gray-300 mb-4">
+          お気に入りの本で、あなたの本棚を作ってシェアしよう
+        </p>
+        <div className="text-sm text-gray-400">
+          {bookshelfCount}個の本棚・{bookCount}冊の本が登録されています
         </div>
-      </h2>
-      <div className="text-center text-xs mb-3 text-gray-200">
-        自分だけの本棚を作って簡単にシェアできます！
+      </div>
+
+
+      <div className="text-center text-sm mb-3 text-gray-400">
+        {selectedBooks.length === 0 && "本を選んで本棚を作りましょう（最大5冊）"}
+        {selectedBooks.length > 0 && selectedBooks.length < 5 && `${selectedBooks.length}冊選択中（あと${5 - selectedBooks.length}冊追加できます）`}
+        {selectedBooks.length === 5 && "5冊選択済み"}
       </div>
       <div className="flex">
         <div ref={bookshelfImage} className="relative mx-auto w-[320px]">
@@ -102,52 +107,49 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
         </div>
       </div>
       {selectedBooks.length > 0 && (
-        <div className="my-4 flex">
+        <div className="my-6 text-center">
           <button
             onClick={onCreateImage}
-            className="mx-auto border-2 py-2 px-3 rounded hover:opacity-80 flex"
+            className="mx-auto bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded-lg text-white font-medium transition"
           >
-            本棚の画像作成
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 ml-1 my-auto text-yellow-500">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
-            </svg>
+            本棚を作成する
           </button>
         </div>
       )}
       {selectedBooks.length < 5 && (
         <SelectBook setSelectedBooks={setSelectedBooks} />
       )}
-      <div className="flex my-4">
-        <div className="my-auto mr-1 w-1/4 text-sm md:text-base">
-          本棚のタイトル
+      
+      <div className="space-y-3 mt-6">
+        <div>
+          <label className="text-sm text-gray-400">本棚のタイトル</label>
+          <input
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            className="p-2 w-full rounded border border-gray-600 bg-gray-800 text-white focus:border-blue-500 focus:outline-none transition"
+            placeholder="わたしの本棚"
+          />
         </div>
-        <input
-          value={title}
-          onChange={e => setTitle(e.target.value)}
-          className="p-2 w-3/4 rounded"
-        />
-      </div>
-      <div className="flex my-4">
-        <div className="my-auto mr-1 w-1/4 text-sm md:text-base">
-          お名前
+
+        <div>
+          <label className="text-sm text-gray-400">お名前（任意）</label>
+          <input
+            value={userName}
+            onChange={e => setUserName(e.target.value)}
+            className="p-2 w-full rounded border border-gray-600 bg-gray-800 text-white focus:border-blue-500 focus:outline-none transition"
+            placeholder=""
+          />
         </div>
-        <input
-          value={userName}
-          onChange={e => setUserName(e.target.value)}
-          className="p-2 w-3/4 rounded"
-          placeholder='任意'
-        />
-      </div>
-      <div className="flex my-4">
-        <div className="my-auto mr-1 w-1/4 text-sm md:text-base">
-          Twitter ID
+
+        <div>
+          <label className="text-sm text-gray-400">Twitter ID（任意）</label>
+          <input
+            value={twitterId}
+            onChange={e => setTwitterId(e.target.value)}
+            className="p-2 w-full rounded border border-gray-600 bg-gray-800 text-white focus:border-blue-500 focus:outline-none transition"
+            placeholder="@は不要です"
+          />
         </div>
-        <input
-          value={twitterId}
-          onChange={e => setTwitterId(e.target.value)}
-          className="p-2 w-3/4 rounded"
-          placeholder='任意 / @は不要です'
-        />
       </div>
       <PastBookshelves
         bookshelves={bookshelves}
