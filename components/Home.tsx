@@ -25,59 +25,73 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
   const bookshelfImage = useRef<HTMLDivElement>(null)
 
   const onCreateImage = async () => {
-    setLoading(true)
-    setScreenShotMode(true)
-    await new Promise(resolve => setTimeout(resolve, 1000)) // sleepさせないと×ボタンが画像に入ってしまう
+    try {
+      setLoading(true)
+      setScreenShotMode(true)
+      await new Promise(resolve => setTimeout(resolve, 1000)) // sleepさせないと×ボタンが画像に入ってしまう
 
-    const bookshelfDom = bookshelfImage.current
-    if (!bookshelfDom) {
+      const bookshelfDom = bookshelfImage.current
+      if (!bookshelfDom) {
+        setScreenShotMode(false)
+        setLoading(false)
+        return
+      }
+
+      const canvas = await html2canvas(bookshelfDom, {useCORS: true})
+      const imageData = canvas.toDataURL()
+
+      const response = await fetch("/api/upload_image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({imageData, selectedBooks, title, user_name: userName, twitter_id: twitterId})
+      })
+      
+      if (!response.ok) {
+        throw new Error('アップロードに失敗しました')
+      }
+      
+      const data = await response.json()
+      const hash = data.hash as string
+
+      setScreenShotMode(false)
+      await new Promise(resolve => setTimeout(resolve, 500)) // sleepさせないとモーダルに画像が表示されない
+
+      setLoading(false)
+      setModalHash(hash)
+    } catch (error) {
+      console.error('Error creating bookshelf:', error)
       setScreenShotMode(false)
       setLoading(false)
-      return
+      alert('本棚の作成に失敗しました。もう一度お試しください。')
     }
-
-    const canvas = await html2canvas(bookshelfDom, {useCORS: true})
-    const imageData = canvas.toDataURL()
-
-    const response = await fetch("/api/upload_image", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({imageData, selectedBooks, title, user_name: userName, twitter_id: twitterId})
-    })
-    const data = await response.json()
-    const hash = data.hash as string
-
-    setScreenShotMode(false)
-    await new Promise(resolve => setTimeout(resolve, 500)) // sleepさせないとモーダルに画像が表示されない
-
-    setLoading(false)
-    setModalHash(hash)
   }
 
   return (
     <>
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold mb-2">Web本棚</h1>
-        <p className="text-gray-300 mb-4">
+        <h1 className="text-3xl md:text-4xl font-bold mb-3">Web本棚</h1>
+        <p className="text-gray-300 mb-2 text-base md:text-lg">
           お気に入りの本で、あなたの本棚を作ってシェアしよう
         </p>
-        <div className="text-sm text-gray-400">
-          {bookshelfCount}個の本棚・{bookCount}冊の本が登録されています
-        </div>
+        <p className="text-sm text-gray-500">
+          無料・ログイン不要
+        </p>
       </div>
 
 
-      <div className="text-center text-sm mb-3 text-gray-400">
-        {selectedBooks.length === 0 && "本を選んで本棚を作りましょう（最大5冊）"}
-        {selectedBooks.length > 0 && selectedBooks.length < 5 && `${selectedBooks.length}冊選択中（あと${5 - selectedBooks.length}冊追加できます）`}
-        {selectedBooks.length === 5 && "5冊選択済み"}
+      <div className="text-center mb-4">
+        <div className="text-sm text-gray-400">
+          {selectedBooks.length === 0 && "本を選んで本棚を作りましょう（最大5冊）"}
+          {selectedBooks.length > 0 && selectedBooks.length < 5 && `${selectedBooks.length}冊選択中 • あと${5 - selectedBooks.length}冊追加できます`}
+          {selectedBooks.length === 5 && "5冊選択済み"}
+        </div>
       </div>
       <div className="flex">
         <div ref={bookshelfImage} className="relative mx-auto w-[320px]">
           <div>
-            <img src="/bookshelf.png" />
+            <img src="/bookshelf.png" alt="本棚" />
           </div>
           <h2 className={`absolute text-xl text-gray-900 font-bold w-full text-center ${screenShotMode ? "top-2" : "top-4"}`}>
             {title}
@@ -86,7 +100,7 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
             {selectedBooks.map((book, i) => (
               <div className={`w-1/5 flex relative ${selectedBooks.length < 4 ? 'mx-2' : 'mx-1'}`} key={i}>
                 <div className="mt-auto" key={book.asin}>
-                  <img src={book.image || undefined} />
+                  <img src={book.image || undefined} alt={book.title} />
                 </div>
                 <span
                   onClick={() => setSelectedBooks(prev => {
@@ -110,9 +124,9 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
         <div className="my-6 text-center">
           <button
             onClick={onCreateImage}
-            className="mx-auto bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded-lg text-white font-medium transition"
+            className="mx-auto bg-gray-700 hover:bg-gray-600 py-3 px-6 rounded-lg text-white font-medium transition"
           >
-            本棚を作成する
+            本棚を作成してシェア
           </button>
         </div>
       )}
@@ -120,35 +134,39 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
         <SelectBook setSelectedBooks={setSelectedBooks} />
       )}
       
-      <div className="space-y-3 mt-6">
+      <div className="space-y-4 mt-8 p-4 md:p-6 bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700">
         <div>
-          <label className="text-sm text-gray-400">本棚のタイトル</label>
+          <label className="block text-sm font-medium text-gray-300 mb-1">本棚のタイトル</label>
           <input
             value={title}
             onChange={e => setTitle(e.target.value)}
-            className="p-2 w-full rounded border border-gray-600 bg-gray-800 text-white focus:border-blue-500 focus:outline-none transition"
+            className="p-3 w-full rounded-lg border border-gray-600 bg-gray-900/50 text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
             placeholder="わたしの本棚"
+            maxLength={20}
           />
         </div>
 
         <div>
-          <label className="text-sm text-gray-400">お名前（任意）</label>
+          <label className="block text-sm font-medium text-gray-300 mb-1">お名前（任意）</label>
           <input
             value={userName}
             onChange={e => setUserName(e.target.value)}
-            className="p-2 w-full rounded border border-gray-600 bg-gray-800 text-white focus:border-blue-500 focus:outline-none transition"
-            placeholder=""
+            className="p-3 w-full rounded-lg border border-gray-600 bg-gray-900/50 text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
+            placeholder="ニックネームなど"
           />
         </div>
 
         <div>
-          <label className="text-sm text-gray-400">Twitter ID（任意）</label>
-          <input
-            value={twitterId}
-            onChange={e => setTwitterId(e.target.value)}
-            className="p-2 w-full rounded border border-gray-600 bg-gray-800 text-white focus:border-blue-500 focus:outline-none transition"
-            placeholder="@は不要です"
-          />
+          <label className="block text-sm font-medium text-gray-300 mb-1">Twitter ID（任意）</label>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">@</span>
+            <input
+              value={twitterId}
+              onChange={e => setTwitterId(e.target.value.replace('@', ''))}
+              className="p-3 pl-8 w-full rounded-lg border border-gray-600 bg-gray-900/50 text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition"
+              placeholder="username"
+            />
+          </div>
         </div>
       </div>
       <PastBookshelves
