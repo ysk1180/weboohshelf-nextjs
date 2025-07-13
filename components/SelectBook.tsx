@@ -15,7 +15,25 @@ const SelectBook = ({setSelectedBooks}: Props): JSX.Element => {
   // 参考：https://stackoverflow.com/questions/42217121/how-to-start-search-only-when-user-stops-typing
   useEffect(() => {
     const delayFn = setTimeout(() => {
-      onSubmit()
+      if(!keyword) {
+        setCandidateBooks([])
+        setIsLoading(false)
+        return
+      }
+
+      const searchBooks = async () => {
+        try {
+          setIsLoading(true)
+          const res = await fetch(`/api/fetch_amazon_books?keyword=${keyword}`)
+          const data = await res.json()
+          setCandidateBooks(data)
+          setOpenCandidates(true)
+        } finally {
+          setIsLoading(false)
+        }
+      }
+      
+      searchBooks()
     }, 800)
 
     return () => clearTimeout(delayFn)

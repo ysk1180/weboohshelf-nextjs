@@ -6,7 +6,7 @@ import { noIdBook } from 'types/expansion_book'
 type Props = {
   isOpen: boolean
   modalHash: string
-  setModalHash: any
+  setModalHash: (hash: string) => void
   selectedBooks?: noIdBook[]
 }
 

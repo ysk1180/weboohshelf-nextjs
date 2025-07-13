@@ -1,5 +1,5 @@
 import html2canvas from 'html2canvas'
-import { useRef, useState } from 'react'
+import { useRef, useState, useMemo } from 'react'
 import RecommendShareModal from './RecommendShareModal'
 import SelectBook from './SelectBook'
 import PastBookshelves from './PastBookshelves'
@@ -26,6 +26,12 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
 
   const bookshelfImage = useRef<HTMLDivElement>(null)
 
+  // 本の配列をメモ化して、不要な再レンダリングを防ぐ
+  const animatedBooks = useMemo(() => 
+    selectedBooks.map((book, index) => ({ ...book, id: `${book.asin}-${index}` })),
+    [selectedBooks]
+  )
+
   const onCreateImage = async () => {
     try {
       setLoading(true)
@@ -47,7 +53,13 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({imageData, selectedBooks, title, user_name: userName, twitter_id: xId})
+        body: JSON.stringify({
+          imageData, 
+          selectedBooks: selectedBooks.map(({ asin, title, image }) => ({ asin, title, image })), // 必要なプロパティのみ送信
+          title, 
+          user_name: userName, 
+          twitter_id: xId
+        })
       })
       
       if (!response.ok) {
@@ -100,9 +112,9 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
             {title}
           </h2>
           <div className="absolute bottom-5 flex justify-center mx-1" >
-            {selectedBooks.map((book, i) => (
-              <div className={`w-1/5 flex relative ${selectedBooks.length < 4 ? 'mx-2' : 'mx-1'} animate-fadeIn`} key={i}>
-                <div className="mt-auto transition-transform duration-300 hover:scale-105" key={book.asin}>
+            {animatedBooks.map((book, i) => (
+              <div className={`w-1/5 flex relative ${animatedBooks.length < 4 ? 'mx-2' : 'mx-1'} animate-fadeIn`} key={book.id}>
+                <div className="mt-auto transition-transform duration-300 hover:scale-105">
                   <img src={book.image || undefined} alt={book.title} />
                 </div>
                 <span
