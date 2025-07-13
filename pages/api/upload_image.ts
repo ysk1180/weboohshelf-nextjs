@@ -75,6 +75,14 @@ const uploadImage = async (
     })
   }
 
+  // ISRのオンデマンド再生成を試みる（Next.js 12.2以降で利用可能）
+  try {
+    await res.revalidate('/')
+  } catch (err) {
+    // エラーが発生しても処理を続行
+    console.log('ISR revalidation failed:', err)
+  }
+
   res.status(200).json({hash})
 }
 

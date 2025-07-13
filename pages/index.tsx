@@ -81,6 +81,6 @@ export const getStaticProps: GetStaticProps = async () => {
       bookshelfCount,
       bookCount,
     },
-    revalidate: 60, // 1分ごとに再生成
+    revalidate: 3600, // 1時間ごとに再生成（オンデマンド再生成があるため）
   };
 };
