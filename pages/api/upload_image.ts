@@ -103,8 +103,16 @@ const uploadImage = async (
       })
     }
 
-    // ISRのオンデマンド再生成は本番環境で問題が発生するため一旦無効化
-    // TODO: 本番環境でのrevalidate対応を検討
+    // ISRのオンデマンド再生成を実行
+    if (res.revalidate && typeof res.revalidate === 'function') {
+      try {
+        await res.revalidate('/')
+        console.log('ISR revalidation successful')
+      } catch (err) {
+        // エラーが発生しても処理を続行
+        console.log('ISR revalidation failed:', err)
+      }
+    }
 
     res.status(200).json({hash})
   } catch (error) {
