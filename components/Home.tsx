@@ -57,7 +57,9 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
       })
       
       if (!response.ok) {
-        throw new Error('アップロードに失敗しました')
+        const errorData = await response.json()
+        console.error('Upload error response:', errorData)
+        throw new Error(`アップロードに失敗しました: ${JSON.stringify(errorData)}`)
       }
       
       const data = await response.json()
