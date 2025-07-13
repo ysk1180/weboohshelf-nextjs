@@ -4,86 +4,104 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 
 type returnData = {
   hash: string
+} | {
+  error: string
 }
 
 const uploadImage = async (
   req: NextApiRequest,
   res: NextApiResponse<returnData>
 ) => {
-  const { imageData, selectedBooks, title, user_name, twitter_id } = req.body
-
-  const fileData = imageData.replace(/^data:\w+\/\w+;base64,/, '')
-  const decodedFile = Buffer.from(fileData, 'base64')
-
-  const l = 8;
-  const c = "abcdefghijklmnopqrstuvwxyz0123456789";
-  const cl = c.length;
-  let hash = "";
-  for(var i=0; i<l; i++){
-    hash += c[Math.floor(Math.random()*cl)];
+  // POSTメソッドのみ許可
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', ['POST'])
+    res.status(405).end(`Method ${req.method} Not Allowed`)
+    return
   }
 
-  const s3 = new S3Client({
-    region: 'ap-northeast-1',
-    credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID_S3 as string,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_S3 as string,
+  try {
+    const { imageData, selectedBooks, title, user_name, twitter_id } = req.body
+
+    const fileData = imageData.replace(/^data:\w+\/\w+;base64,/, '')
+    const decodedFile = Buffer.from(fileData, 'base64')
+
+    const l = 8;
+    const c = "abcdefghijklmnopqrstuvwxyz0123456789";
+    const cl = c.length;
+    let hash = "";
+    for(var i=0; i<l; i++){
+      hash += c[Math.floor(Math.random()*cl)];
     }
-  })
 
-  s3.send(
-    new PutObjectCommand({
-      Bucket: `webookshelf-${process.env.NODE_ENV}`,
-      Key: `images/${hash}.png`,
-      Body: decodedFile,
+    const s3 = new S3Client({
+      region: 'ap-northeast-1',
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID_S3 as string,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_S3 as string,
+      }
     })
-  )
 
-  const prisma = new PrismaClient()
+    await s3.send(
+      new PutObjectCommand({
+        Bucket: `webookshelf-${process.env.NODE_ENV}`,
+        Key: `images/${hash}.png`,
+        Body: decodedFile,
+      })
+    )
 
-  const bookshelf = await prisma.bookshelf.create({
-    data: {
-      title,
-      h: hash,
-      user_name,
-      twitter_id,
-    }
-  })
-  for (const { asin, title, url, image, page, released_at } of selectedBooks) {
-    let book = await prisma.book.findUnique({
-      where: {
-        asin
-      },
+    const prisma = new PrismaClient()
+
+    const bookshelf = await prisma.bookshelf.create({
+      data: {
+        title,
+        h: hash,
+        user_name,
+        twitter_id,
+      }
     })
-    if (!book) {
-      book = await prisma.book.create({
+    
+    for (const { asin, title, url, image, page, released_at } of selectedBooks) {
+      let book = await prisma.book.findUnique({
+        where: {
+          asin
+        },
+      })
+      if (!book) {
+        book = await prisma.book.create({
+          data: {
+            asin,
+            title,
+            url,
+            image,
+            page: page | 0,
+            released_at,
+          }
+        })
+      }
+      await prisma.bookshelfBook.create({
         data: {
-          asin,
-          title,
-          url,
-          image,
-          page: page | 0,
-          released_at,
+          book_id: book.id,
+          bookshelf_id: bookshelf.id,
         }
       })
     }
-    await prisma.bookshelfBook.create({
-      data: {
-        book_id: book.id,
-        bookshelf_id: bookshelf.id,
+
+    // ISRのオンデマンド再生成を試みる（Next.js 12.2以降で利用可能）
+    // 本番環境で問題が発生する場合があるため、安全に処理
+    if (res.revalidate && typeof res.revalidate === 'function') {
+      try {
+        await res.revalidate('/')
+      } catch (err) {
+        // エラーが発生しても処理を続行
+        console.log('ISR revalidation failed:', err)
       }
-    })
-  }
+    }
 
-  // ISRのオンデマンド再生成を試みる（Next.js 12.2以降で利用可能）
-  try {
-    await res.revalidate('/')
-  } catch (err) {
-    // エラーが発生しても処理を続行
-    console.log('ISR revalidation failed:', err)
+    res.status(200).json({hash})
+  } catch (error) {
+    console.error('Upload error:', error)
+    res.status(500).json({ error: 'Internal server error' })
   }
-
-  res.status(200).json({hash})
 }
 
 export default uploadImage
