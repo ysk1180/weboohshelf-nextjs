@@ -20,6 +20,12 @@ const uploadImage = async (
   }
 
   try {
+    // 環境変数チェック
+    if (!process.env.AWS_ACCESS_KEY_ID_S3 || !process.env.AWS_SECRET_ACCESS_KEY_S3) {
+      console.error('Missing S3 credentials')
+      throw new Error('S3 credentials not configured')
+    }
+
     const { imageData, selectedBooks, title, user_name, twitter_id } = req.body
 
     if (!imageData || !selectedBooks || !Array.isArray(selectedBooks)) {
@@ -112,12 +118,17 @@ const uploadImage = async (
       stack: error instanceof Error ? error.stack : undefined
     })
     
-    // 本番環境では詳細なエラー情報を隠す
-    const errorMessage = process.env.NODE_ENV === 'production' 
-      ? 'Internal server error' 
-      : (error instanceof Error ? error.message : 'Unknown error')
+    // 一時的に本番環境でも詳細なエラー情報を出力
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    const errorDetails = {
+      error: errorMessage,
+      stack: error instanceof Error ? error.stack?.split('\n').slice(0, 3).join('\n') : undefined,
+      env: process.env.NODE_ENV,
+      bucket: `webookshelf-${process.env.NODE_ENV}`,
+      hasS3Credentials: !!(process.env.AWS_ACCESS_KEY_ID_S3 && process.env.AWS_SECRET_ACCESS_KEY_S3)
+    }
     
-    res.status(500).json({ error: errorMessage })
+    res.status(500).json(errorDetails)
   }
 }
 
