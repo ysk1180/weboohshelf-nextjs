@@ -1,5 +1,5 @@
 import html2canvas from 'html2canvas'
-import { useRef, useState, useMemo } from 'react'
+import { useRef, useState } from 'react'
 import RecommendShareModal from './RecommendShareModal'
 import SelectBook from './SelectBook'
 import PastBookshelves from './PastBookshelves'
@@ -25,12 +25,6 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
   const { showToast, ToastContainer } = useToast()
 
   const bookshelfImage = useRef<HTMLDivElement>(null)
-
-  // 本の配列をメモ化して、不要な再レンダリングを防ぐ
-  const animatedBooks = useMemo(() => 
-    selectedBooks.map((book, index) => ({ ...book, id: `${book.asin}-${index}` })),
-    [selectedBooks]
-  )
 
   const onCreateImage = async () => {
     try {
@@ -112,8 +106,8 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
             {title}
           </h2>
           <div className="absolute bottom-5 flex justify-center mx-1" >
-            {animatedBooks.map((book, i) => (
-              <div className={`w-1/5 flex relative ${animatedBooks.length < 4 ? 'mx-2' : 'mx-1'} animate-fadeIn`} key={book.id}>
+            {selectedBooks.map((book, i) => (
+              <div className={`w-1/5 flex relative ${selectedBooks.length < 4 ? 'mx-2' : 'mx-1'} animate-fadeIn`} key={`${book.asin}-${i}`}>
                 <div className="mt-auto transition-transform duration-300 hover:scale-105">
                   <img src={book.image || undefined} alt={book.title} />
                 </div>

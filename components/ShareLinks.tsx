@@ -21,12 +21,16 @@ const ShareLinks = ({hash, selectedBooks}: Props): JSX.Element => {
       return `#${cleanTitle}`
     })
     .join(' ') || ''
+  
+  // X（Twitter）用のテキストを作成
+  const tweetText = `本棚を作りました📚\n\n#Web本棚 ${bookHashtags}`.trim()
+  const shareUrl = `https://web-bookshelf.com/bookshelves/${hash}`
   return (
     <div className="flex">
       <div className="mx-auto flex flex-col sm:flex-row gap-3 max-w-md w-full">
         <a
           className="flex justify-center items-center bg-black hover:bg-gray-900 py-3 px-4 rounded-lg cursor-pointer transition transform hover:scale-105 shadow-lg border border-gray-700"
-          href={`https://twitter.com/share?text=%23Web本棚 ${bookHashtags}&url=https://web-bookshelf.com/bookshelves/${hash}`}
+          href={`https://x.com/intent/post?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(shareUrl)}`}
           target="_blank"
           rel="noreferrer"
         >
