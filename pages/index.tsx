@@ -24,8 +24,9 @@ const Index = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Elem
         <meta name="description" content={description} />
         <meta property="og:description" content={description} />
         <meta property="og:url" content={url} />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
-      <div className="my-2 mx-3">
+      <div className="my-2 mx-0 md:mx-3">
         <Home
           bookshelves={bookshelves}
           books={books}

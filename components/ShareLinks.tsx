@@ -1,18 +1,32 @@
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useState } from 'react';
+import { noIdBook } from 'types/expansion_book'
 
 type Props = {
   hash: string
+  selectedBooks?: noIdBook[]
 }
 
-const ShareLinks = ({hash}: Props): JSX.Element => {
+const ShareLinks = ({hash, selectedBooks}: Props): JSX.Element => {
   const [copied, setCopied] = useState(false)
+  
+  // 本のタイトルをハッシュタグにする（最大3冊まで）
+  const bookHashtags = selectedBooks
+    ?.slice(0, 3)
+    .map(book => {
+      // タイトルから記号や空白を削除してハッシュタグを作成
+      const cleanTitle = book.title
+        .replace(/[「」『』【】\[\]\(\)（）\s:：]/g, '')
+        .slice(0, 20) // 長すぎる場合は20文字まで
+      return `#${cleanTitle}`
+    })
+    .join(' ') || ''
   return (
     <div className="flex">
       <div className="mx-auto flex flex-col sm:flex-row gap-3 max-w-md w-full">
         <a
           className="flex justify-center items-center bg-black hover:bg-gray-900 py-3 px-4 rounded-lg cursor-pointer transition transform hover:scale-105 shadow-lg border border-gray-700"
-          href={`https://twitter.com/share?text=%23Web本棚&url=https://web-bookshelf.com/bookshelves/${hash}`}
+          href={`https://twitter.com/share?text=%23Web本棚 ${bookHashtags}&url=https://web-bookshelf.com/bookshelves/${hash}`}
           target="_blank"
           rel="noreferrer"
         >
