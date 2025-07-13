@@ -31,7 +31,7 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
       setLoading(true)
       setModalHash("") // モーダルを確実に閉じる
       setScreenShotMode(true)
-      await new Promise(resolve => setTimeout(resolve, 1000)) // sleepさせないと×ボタンが画像に入ってしまう
+      await new Promise(resolve => setTimeout(resolve, 2000)) // 画像が完全に読み込まれるまで待機
 
       const bookshelfDom = bookshelfImage.current
       if (!bookshelfDom) {
@@ -129,8 +129,8 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
           </h2>
           <div className="absolute bottom-5 flex justify-center mx-1" >
             {selectedBooks.map((book, i) => (
-              <div className={`w-1/5 flex relative ${selectedBooks.length < 4 ? 'mx-2' : 'mx-1'} animate-fadeIn`} key={`${book.asin}-${i}`}>
-                <div className="mt-auto transition-transform duration-300 hover:scale-105">
+              <div className={`w-1/5 flex relative ${selectedBooks.length < 4 ? 'mx-2' : 'mx-1'} ${screenShotMode ? '' : 'animate-fadeIn'}`} key={`${book.asin}-${i}`}>
+                <div className={`mt-auto ${screenShotMode ? '' : 'transition-transform duration-300 hover:scale-105'}`}>
                   <img src={book.image || undefined} alt={book.title} />
                 </div>
                 <span
