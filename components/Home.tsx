@@ -29,6 +29,7 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
   const onCreateImage = async () => {
     try {
       setLoading(true)
+      setModalHash("") // モーダルを確実に閉じる
       setScreenShotMode(true)
       await new Promise(resolve => setTimeout(resolve, 1000)) // sleepさせないと×ボタンが画像に入ってしまう
 
@@ -39,7 +40,19 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
         return
       }
 
-      const canvas = await html2canvas(bookshelfDom, {useCORS: true})
+      const canvas = await html2canvas(bookshelfDom, {
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        imageTimeout: 15000,
+        onclone: (clonedDoc) => {
+          // クローンされたドキュメントのbodyからaria-hiddenを削除
+          const body = clonedDoc.body
+          if (body) {
+            body.removeAttribute('aria-hidden')
+          }
+        }
+      })
       const imageData = canvas.toDataURL()
 
       const response = await fetch("/api/upload_image", {
@@ -49,7 +62,14 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
         },
         body: JSON.stringify({
           imageData, 
-          selectedBooks: selectedBooks.map(({ asin, title, image }) => ({ asin, title, image })), // 必要なプロパティのみ送信
+          selectedBooks: selectedBooks.map(({ asin, title, image, url, page, released_at }) => ({ 
+            asin, 
+            title, 
+            image, 
+            url, 
+            page, 
+            released_at 
+          })), // 必要なプロパティを送信
           title, 
           user_name: userName, 
           twitter_id: xId
