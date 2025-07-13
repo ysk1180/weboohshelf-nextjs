@@ -9,6 +9,7 @@ const SelectBook = ({setSelectedBooks}: Props): JSX.Element => {
   const [keyword, setKeyword] = useState("")
   const [candidateBooks, setCandidateBooks] = useState<noIdBook[]>([])
   const [openCandidates, setOpenCandidates] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
 
   // ユーザーが入力後に少し待ってから検索を走らせる（入力途中のものでAmazonAPIにアクセスしてしまうのを防ぐため）
   // 参考：https://stackoverflow.com/questions/42217121/how-to-start-search-only-when-user-stops-typing
@@ -23,13 +24,19 @@ const SelectBook = ({setSelectedBooks}: Props): JSX.Element => {
   const onSubmit = async() => {
     if(!keyword) {
       setCandidateBooks([])
+      setIsLoading(false)
       return
     }
 
-    const res = await fetch(`/api/fetch_amazon_books?keyword=${keyword}`)
-    const data = await res.json()
-    setCandidateBooks(data)
-    setOpenCandidates(true)
+    try {
+      setIsLoading(true)
+      const res = await fetch(`/api/fetch_amazon_books?keyword=${keyword}`)
+      const data = await res.json()
+      setCandidateBooks(data)
+      setOpenCandidates(true)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -55,7 +62,13 @@ const SelectBook = ({setSelectedBooks}: Props): JSX.Element => {
           </button>
         </div>
       </div>
-      {candidateBooks.length > 0 && (
+      {isLoading && (
+        <div className="flex justify-center items-center py-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-300"></div>
+          <span className="ml-2 text-gray-400">本を検索中...</span>
+        </div>
+      )}
+      {!isLoading && candidateBooks.length > 0 && (
         <div>
           <div 
             className="flex items-center justify-between p-2 bg-gray-800 rounded cursor-pointer hover:bg-gray-700 transition mb-2" 
@@ -79,7 +92,7 @@ const SelectBook = ({setSelectedBooks}: Props): JSX.Element => {
             <div className="space-y-2">
               {candidateBooks.map(book => (
                 <div
-                  className="bg-gray-800 p-2 rounded hover:bg-gray-700 cursor-pointer transition border border-transparent hover:border-gray-600"
+                  className="bg-gray-800 p-2 rounded hover:bg-gray-700 cursor-pointer transition-all duration-200 border border-transparent hover:border-gray-600 hover:scale-[1.02] transform"
                   onClick={() => setSelectedBooks(prev => [...prev, book])}
                   key={book.asin}
                 >

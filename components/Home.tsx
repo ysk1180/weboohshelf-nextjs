@@ -5,6 +5,7 @@ import SelectBook from './SelectBook'
 import PastBookshelves from './PastBookshelves'
 import { expansionBook, noIdBook } from 'types/expansion_book'
 import Loading from 'components/Loading'
+import { useToast } from 'hooks/useToast'
 
 type Props = {
   bookshelves: any[]
@@ -21,6 +22,7 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
   const [modalHash, setModalHash] = useState<string>("")
   const [screenShotMode, setScreenShotMode] = useState(false)
   const [loading, setLoading] = useState(false)
+  const { showToast, ToastContainer } = useToast()
 
   const bookshelfImage = useRef<HTMLDivElement>(null)
 
@@ -60,11 +62,12 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
 
       setLoading(false)
       setModalHash(hash)
+      showToast('本棚を作成しました！', 'success')
     } catch (error) {
       console.error('Error creating bookshelf:', error)
       setScreenShotMode(false)
       setLoading(false)
-      alert('本棚の作成に失敗しました。もう一度お試しください。')
+      showToast('本棚の作成に失敗しました。もう一度お試しください。', 'error')
     }
   }
 
@@ -81,7 +84,7 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
       </div>
 
 
-      <div className="text-center mb-4">
+      <div className="text-center mb-4 px-4">
         <div className="text-sm text-gray-400">
           {selectedBooks.length === 0 && "本を選んで本棚を作りましょう（最大5冊）"}
           {selectedBooks.length > 0 && selectedBooks.length < 5 && `${selectedBooks.length}冊選択中 • あと${5 - selectedBooks.length}冊追加できます`}
@@ -98,8 +101,8 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
           </h2>
           <div className="absolute bottom-5 flex justify-center mx-1" >
             {selectedBooks.map((book, i) => (
-              <div className={`w-1/5 flex relative ${selectedBooks.length < 4 ? 'mx-2' : 'mx-1'}`} key={i}>
-                <div className="mt-auto" key={book.asin}>
+              <div className={`w-1/5 flex relative ${selectedBooks.length < 4 ? 'mx-2' : 'mx-1'} animate-fadeIn`} key={i}>
+                <div className="mt-auto transition-transform duration-300 hover:scale-105" key={book.asin}>
                   <img src={book.image || undefined} alt={book.title} />
                 </div>
                 <span
@@ -134,7 +137,7 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
         <SelectBook setSelectedBooks={setSelectedBooks} />
       )}
       
-      <div className="space-y-4 mt-8 p-4 md:p-6 bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700">
+      <div className="space-y-4 mt-8 mx-4 md:mx-0 p-4 md:p-6 bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700">
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-1">本棚のタイトル</label>
           <input
@@ -179,8 +182,10 @@ const Home = ({bookshelves, books, bookshelfCount, bookCount}: Props): JSX.Eleme
         isOpen={!!modalHash}
         modalHash={modalHash}
         setModalHash={setModalHash}
+        selectedBooks={selectedBooks}
       />
       {loading && <Loading />}
+      <ToastContainer />
     </>
   )
 }

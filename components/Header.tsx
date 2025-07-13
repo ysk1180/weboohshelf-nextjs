@@ -6,10 +6,10 @@ const Header = ():JSX.Element => {
       id="header"
       className="bg-black w-full h-12"
     >
-      <div className="flex items-center h-full max-w-3xl md:mx-auto">
+      <div className="flex items-center h-full max-w-3xl mx-auto px-4 md:px-0">
         <Link href="/">
-          <a className="px-4 py-2 text-xl">
-            <img src="/logo.png" />
+          <a className="py-2 text-xl">
+            <img src="/logo.png" alt="Web本棚" className="h-8" />
           </a>
         </Link>
       </div>
