@@ -43,9 +43,6 @@ const uploadImage = async (
       hash += c[Math.floor(Math.random()*cl)];
     }
 
-    console.log('Generated hash:', hash)
-    console.log('NODE_ENV:', process.env.NODE_ENV)
-    console.log('S3 bucket:', `webookshelf-${process.env.NODE_ENV}`)
 
     const s3 = new S3Client({
       region: 'ap-northeast-1',
@@ -60,7 +57,6 @@ const uploadImage = async (
       ? 'webookshelf-production' 
       : `webookshelf-${process.env.NODE_ENV}`
     
-    console.log('Using S3 bucket:', bucketName)
     
     await s3.send(
       new PutObjectCommand({
@@ -92,9 +88,9 @@ const uploadImage = async (
           data: {
             asin,
             title,
-            url,
+            url: url || '',  // urlがundefinedの場合は空文字列
             image,
-            page: page | 0,
+            page: page || 0,  // ビット演算子ではなく論理OR演算子を使用
             released_at,
           }
         })
@@ -118,17 +114,12 @@ const uploadImage = async (
       stack: error instanceof Error ? error.stack : undefined
     })
     
-    // 一時的に本番環境でも詳細なエラー情報を出力
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-    const errorDetails = {
-      error: errorMessage,
-      stack: error instanceof Error ? error.stack?.split('\n').slice(0, 3).join('\n') : undefined,
-      env: process.env.NODE_ENV,
-      bucket: `webookshelf-${process.env.NODE_ENV}`,
-      hasS3Credentials: !!(process.env.AWS_ACCESS_KEY_ID_S3 && process.env.AWS_SECRET_ACCESS_KEY_S3)
-    }
+    // 本番環境では詳細なエラー情報を隠す
+    const errorMessage = process.env.NODE_ENV === 'production' 
+      ? 'Internal server error' 
+      : (error instanceof Error ? error.message : 'Unknown error')
     
-    res.status(500).json(errorDetails)
+    res.status(500).json({ error: errorMessage })
   }
 }
 
